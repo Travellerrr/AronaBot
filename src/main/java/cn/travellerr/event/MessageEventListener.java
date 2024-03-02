@@ -1,0 +1,37 @@
+package cn.travellerr.event;
+
+import cn.travellerr.GehshinHelp.CharacterHelp;
+import cn.travellerr.tools.Log;
+import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.event.EventHandler;
+import net.mamoe.mirai.event.SimpleListenerHost;
+import net.mamoe.mirai.event.events.MessageEvent;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.regex.Pattern;
+
+public class MessageEventListener extends SimpleListenerHost {
+    @EventHandler()
+    public void onMessage(@NotNull MessageEvent event) {
+
+        Contact subject = event.getSubject();
+        String msg = event.getMessage().serializeToMiraiCode();
+
+        switch (msg) {
+            case "测试":
+                return;
+            case "帮助":
+                subject.sendMessage("测试");
+                return;
+            case "#原神角色列表":
+                Contact.sendImage(subject, new File("./data/cn.travellerr.GenshinHelper/GenshinHelp/角色列表/info.png"));
+                return;
+        }
+        String info = "#原神攻略 (\\S+)";
+        if (Pattern.matches(info, msg)) {
+            Log.info("攻略指令");
+            CharacterHelp.help(event);
+        }
+    }
+}
