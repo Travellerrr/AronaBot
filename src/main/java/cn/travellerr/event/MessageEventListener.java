@@ -1,7 +1,9 @@
 package cn.travellerr.event;
 
+import cn.travellerr.BlueArchive.jrys;
 import cn.travellerr.GehshinHelp.CharacterHelp;
 import cn.travellerr.tools.Log;
+
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
@@ -26,6 +28,11 @@ public class MessageEventListener extends SimpleListenerHost {
                 return;
             case "#原神角色列表":
                 Contact.sendImage(subject, new File("./data/cn.travellerr.GenshinHelper/GenshinHelp/角色列表/info.png"));
+                return;
+            case "#今日运势":
+            case "#jrys":
+                jrys.info(event);
+                Log.info("运势指令");
                 return;
         }
         String info = "#原神攻略 (\\S+)";

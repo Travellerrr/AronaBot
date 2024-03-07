@@ -4,4 +4,4 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-rootProject.name = "GenshinHelper"
+rootProject.name = "AronaBot"
