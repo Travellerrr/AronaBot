@@ -48,9 +48,12 @@ public class jrys {
         subject.sendMessage(new At(fromQQ).plus("\nSensei请稍等！阿洛娜这就为您抽签！"));
         try {
             Random rand = new Random();
-            int place = rand.nextInt(2);
-            int picNum = 4;                   //默认游戏开发部
+            /*int school = rand.nextInt(2);
+            rand = new Random();*/
+            int place = rand.nextInt(4);
+            int picNum = 4;                   //默认
             if (place == 1) picNum = 5; //真理部
+            if (place == 3) picNum = 3;//工程部
             // 读取背景图片和覆盖图片
             ClassLoader classLoader = jrys.class.getClassLoader();
             BufferedImage background = ImageIO.read(classLoader.getResourceAsStream("jrys/千禧年/" + place + "/bg.png"));
