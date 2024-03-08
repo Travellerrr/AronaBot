@@ -1,12 +1,13 @@
 package cn.travellerr.BlueArchive;
 
-import cn.travellerr.tools.Log;
 import cn.travellerr.tools.GFont;
+import cn.travellerr.tools.Log;
 import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChain;
-import net.mamoe.mirai.message.data.MessageChainBuilder;
-import net.mamoe.mirai.message.data.QuoteReply;
+import net.mamoe.mirai.utils.ExternalResource;
+import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -14,17 +15,35 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class jrys {
-    public static void info(MessageEvent event) {
+    public static Map<String, String> getMatcher(@NotNull GroupMessageEvent event) {
+        Map<String, String> map = new HashMap<>();
+        String text = event.getMessage().get(0).toString();
+        String regex = "mirai:source:ids=\\[(.*?)\\], internalIds=\\[(.*?)\\], from group (.*?) to (.*?) at (.*?)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(text);
+        if (matcher.find()) {
+            map.put("源ID", matcher.group(1));
+            map.put("内部ID", matcher.group(2));
+            map.put("来源QQ号", matcher.group(3));
+            map.put("目标组ID", matcher.group(4));
+            map.put("时间戳", matcher.group(5));
+        }
+        return map;
+    }
+
+    public static void info(GroupMessageEvent event) {
         Contact subject = event.getSubject();
         MessageChain messages = event.getMessage();
-
-
-        MessageChainBuilder messagesChain = new MessageChainBuilder().append(new QuoteReply(messages));
+        Map<String, String> matcher = getMatcher(event);
+        Long fromQQ = Long.valueOf(matcher.get("来源QQ号"));
 
         try {
 
@@ -107,13 +126,13 @@ public class jrys {
             // 保存合成后的图片
             //ImageIO.write(combined, "PNG", new File("combined.png"));
             g.dispose();
-            sendImage(combined, subject, messages);
+            sendImage(combined, subject, messages, fromQQ);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void sendImage(Image image, Contact subject, MessageChain messages) {
+    private static void sendImage(Image image, Contact subject, MessageChain messages, Long fromQQ) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
             ImageIO.write((RenderedImage) image, "png", stream);
@@ -122,7 +141,8 @@ public class jrys {
             subject.sendMessage(messages);
             return;
         }
-        Contact.sendImage(subject, new ByteArrayInputStream(stream.toByteArray()));
+        net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(ExternalResource.create(new ByteArrayInputStream(stream.toByteArray())));
+        subject.sendMessage(sendImage.plus(new At(fromQQ)));
     }
 
     // 生成随机数获取运势
