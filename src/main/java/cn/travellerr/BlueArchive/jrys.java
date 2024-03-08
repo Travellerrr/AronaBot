@@ -23,10 +23,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class jrys {
+    private static int index = 1;
     public static Map<String, String> getMatcher(@NotNull GroupMessageEvent event) {
         Map<String, String> map = new HashMap<>();
         String text = event.getMessage().get(0).toString();
-        String regex = "mirai:source:ids=\\[(.*?)\\], internalIds=\\[(.*?)\\], from group (.*?) to (.*?) at (.*?)";
+        String regex = "mirai:source:ids=\\[(.*?)], internalIds=\\[(.*?)], from group (.*?) to (.*?) at (.*?)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(text);
         if (matcher.find()) {
@@ -43,16 +44,19 @@ public class jrys {
         Contact subject = event.getSubject();
         MessageChain messages = event.getMessage();
         Map<String, String> matcher = getMatcher(event);
-        Long fromQQ = Long.valueOf(matcher.get("来源QQ号"));
-
+        long fromQQ = Long.parseLong(matcher.get("来源QQ号"));
+        subject.sendMessage(new At(fromQQ).plus("\nSensei请稍等！阿洛娜这就为您抽签！"));
         try {
-
             Random rand = new Random();
-            int randNum = rand.nextInt(3);
+            int place = rand.nextInt(2);
+            int picNum = 4;                   //默认游戏开发部
+            if (place == 1) picNum = 5; //真理部
             // 读取背景图片和覆盖图片
             ClassLoader classLoader = jrys.class.getClassLoader();
-            BufferedImage background = ImageIO.read(classLoader.getResourceAsStream("jrys/千禧年/bg/游戏开发部.png"));
-            BufferedImage cover = ImageIO.read(classLoader.getResourceAsStream("jrys/千禧年/character/" + randNum + ".png"));
+            BufferedImage background = ImageIO.read(classLoader.getResourceAsStream("jrys/千禧年/" + place + "/bg.png"));
+            BufferedImage cover = ImageIO.read(classLoader.getResourceAsStream("jrys/千禧年/" + place + "/" + (index % picNum == 0 ? picNum : index % picNum) + ".png"));
+            index++;
+
             int newWidth = (int)(cover.getWidth() /1.6); // 缩小为原来的一半
             int newHeight = (int)(cover.getHeight() / 1.6);
 
@@ -98,7 +102,7 @@ public class jrys {
             g.setFont(font);
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setColor(Color.WHITE);
-            String text = jrys();
+            String text = jrysRand();
             int stringWidth = g.getFontMetrics().stringWidth(text);
             int x =(495 - stringWidth) /2;
             g.drawString(text, x, 170);
@@ -108,7 +112,7 @@ public class jrys {
             g.setFont(font);
             g.setColor(Color.black);
             FontMetrics fontMetrics = g2d.getFontMetrics();
-            int fontHeight = fontMetrics.getHeight()*2;
+            int fontHeight = fontMetrics.getHeight() * 2 + 5;
             int msgY = 250;
             int msgX = 310;
             for(int msgLength = 0; msgLength < message.length()-1; msgLength +=1) {
@@ -116,7 +120,7 @@ public class jrys {
                 msgY += fontHeight;
                 if(msgY > 650) {
                     msgY = 250;
-                    msgX -= 36;
+                    msgX -= 38;
                 }
             }
             font = font.deriveFont(20f);
@@ -146,7 +150,7 @@ public class jrys {
     }
 
     // 生成随机数获取运势
-    public static String jrys() {
+    public static String jrysRand() {
         Random rand = new Random();
         int randnum = rand.nextInt(101);
         if(randnum < 18) return "凶";
