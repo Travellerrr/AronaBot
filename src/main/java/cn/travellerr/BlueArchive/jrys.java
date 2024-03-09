@@ -47,17 +47,29 @@ public class jrys {
         long fromQQ = Long.parseLong(matcher.get("来源QQ号"));
         subject.sendMessage(new At(fromQQ).plus("\nSensei请稍等！阿洛娜这就为您抽签！"));
         try {
+            int schoolNum = 3;  //学校数量
+            int clubNum = 4;  //默认社团数量
+            int picNum = 4;  //默认学员数量
+            int club = 0; //默认社团
             Random rand = new Random();
-            /*int school = rand.nextInt(2);
-            rand = new Random();*/
-            int place = rand.nextInt(4);
-            int picNum = 4;                   //默认
-            if (place == 1) picNum = 5; //真理部
-            if (place == 3) picNum = 3;//工程部
+            int school = rand.nextInt(schoolNum);
+            if (school == 1) {
+                rand = new Random();
+                club = rand.nextInt(clubNum);
+            }
+            if (school == 1) {
+                if (club == 1) picNum = 5;
+                if (club == 3) picNum = 3;
+            } else if (school == 0) {
+                picNum = 5;
+            }
+            Log.info("School: " + school);
+            Log.info("club: " + club);
+            Log.info("picNum: " + picNum);
             // 读取背景图片和覆盖图片
             ClassLoader classLoader = jrys.class.getClassLoader();
-            BufferedImage background = ImageIO.read(classLoader.getResourceAsStream("jrys/千禧年/" + place + "/bg.png"));
-            BufferedImage cover = ImageIO.read(classLoader.getResourceAsStream("jrys/千禧年/" + place + "/" + (index % picNum == 0 ? picNum : index % picNum) + ".png"));
+            BufferedImage background = ImageIO.read(classLoader.getResourceAsStream("jrys/" + school + "/" + club + "/bg.png"));
+            BufferedImage cover = ImageIO.read(classLoader.getResourceAsStream("jrys/" + school + "/" + club + "/" + (index % picNum == 0 ? picNum : index % picNum) + ".png"));
             index++;
 
             int newWidth = (int)(cover.getWidth() /1.6); // 缩小为原来的一半
