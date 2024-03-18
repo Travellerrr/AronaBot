@@ -2,10 +2,12 @@ package cn.travellerr.BlueArchive;
 
 import cn.travellerr.tools.GFont;
 import cn.travellerr.tools.Log;
+import net.mamoe.mirai.contact.AvatarSpec;
 import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.At;
-import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.utils.ExternalResource;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +18,7 @@ import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -42,10 +45,11 @@ public class jrys {
 
     public static void info(GroupMessageEvent event) {
         Contact subject = event.getSubject();
-        MessageChain messages = event.getMessage();
+        User sender = event.getSender();
         Map<String, String> matcher = getMatcher(event);
         long fromQQ = Long.parseLong(matcher.get("来源QQ号"));
         subject.sendMessage(new At(fromQQ).plus("\nSensei请稍等！阿洛娜这就为您抽签！"));
+
         try {
             int schoolNum = 3;  //学校数量
             int clubNum = 4;  //默认社团数量
@@ -117,12 +121,14 @@ public class jrys {
             g.setFont(font);
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setColor(Color.WHITE);
-            String text = jrysRand();
+            GetSentenceApi.getApi(fromQQ);
+            //String text = jrysRand();
+            String text = GetSentenceApi.getText(0);
             int stringWidth = g.getFontMetrics().stringWidth(text);
             int x =(495 - stringWidth) /2;
             g.drawString(text, x, 170);
-            String message = GetSentenceApi.get();
-
+            //String message = GetSentenceApi.get();
+            String message = GetSentenceApi.getText(1);
             font = font.deriveFont(30f);
             g.setFont(font);
             g.setColor(Color.black);
@@ -145,19 +151,25 @@ public class jrys {
             // 保存合成后的图片
             //ImageIO.write(combined, "PNG", new File("combined.png"));
             g.dispose();
-            sendImage(combined, subject, messages, fromQQ);
+            sendImage(sender, combined, subject, fromQQ);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static void sendImage(Image image, Contact subject, MessageChain messages, Long fromQQ) throws IOException {
+    private static void sendImage(User sender, Image image, Contact subject, Long fromQQ) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
             ImageIO.write((RenderedImage) image, "png", stream);
         } catch (IOException e) {
-            Log.error("签到管理:签到图片发送错误!", e);
-            subject.sendMessage(messages);
+            MessageChainBuilder sendMsg = new MessageChainBuilder();
+            net.mamoe.mirai.message.data.Image avatar = Contact.uploadImage(subject, new URL(sender.getAvatarUrl(AvatarSpec.LARGE)).openConnection().getInputStream());
+            sendMsg.append(new At(fromQQ));
+            sendMsg.append("\n");
+            sendMsg.append(avatar);
+            sendMsg.append("\n" + GetSentenceApi.getText(0) + "\n" + GetSentenceApi.getText(3) + "\n" + GetSentenceApi.getText(1) + "\n" + GetSentenceApi.getText(2) + "\n\n抱歉Sensei，由于图片无法发送，这是阿洛娜手写出来的签！");
+            //Log.error("签到管理:签到图片发送错误!",e);
+            subject.sendMessage(sendMsg.build());
             return;
         }
         net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(ExternalResource.create(new ByteArrayInputStream(stream.toByteArray())));
@@ -165,6 +177,8 @@ public class jrys {
     }
 
     // 生成随机数获取运势
+
+    @Deprecated(since = "已废弃")
     public static String jrysRand() {
         Random rand = new Random();
         int randnum = rand.nextInt(101);
@@ -177,4 +191,5 @@ public class jrys {
         else if (randnum < 85) return "大吉";
         else return "超大吉";
     }
+
 }
