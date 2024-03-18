@@ -13,7 +13,7 @@ import net.mamoe.mirai.event.GlobalEventChannel;
 public final class AronaBot extends JavaPlugin {
     public static final AronaBot INSTANCE = new AronaBot();
     /*插件版本*/
-    public static final String version = "0.1.0";
+    public static final String version = "0.2.1";
 
     public static config config;
 
