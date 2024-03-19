@@ -4,6 +4,7 @@ import cn.travellerr.BlueArchive.jrys;
 import cn.travellerr.GehshinHelp.CharacterHelp;
 import cn.travellerr.tools.Log;
 import cn.travellerr.tools.Security;
+import cn.travellerr.tools.SecurityNew;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
@@ -33,6 +34,8 @@ public class MessageEventListener extends SimpleListenerHost {
             case "#监控":
                 Security.info(event);
                 return;
+            case "#新监控":
+                SecurityNew.Security(event);
         }
         String info = "#原神攻略 (\\S+)";
         if (Pattern.matches(info, msg)) {
