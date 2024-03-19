@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public class GetSentenceApi {
     static String fortuneSummary;
@@ -34,9 +35,8 @@ public class GetSentenceApi {
             JsonObject data = jsonResponse.getAsJsonObject("data");
             return data.get("text").getAsString();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     public static void getApi(long qqNumber) {
@@ -64,10 +64,10 @@ public class GetSentenceApi {
         }
     }
 
-    public static String getText(int place) {
-        if (place == 0) return fortuneSummary;
-        if (place == 1) return signText;
-        if (place == 2) return unSignText;
+    public static String getText(String place) {
+        if (Objects.equals(place, "fortuneSummary")) return fortuneSummary;
+        if (Objects.equals(place, "signText")) return signText;
+        if (Objects.equals(place, "unSignText")) return unSignText;
         return luckyStar;
     }
 }

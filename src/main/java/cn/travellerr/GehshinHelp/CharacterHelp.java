@@ -23,7 +23,7 @@ public class CharacterHelp {
         String imgPath = "./data/cn.travellerr.GenshinHelper/GenshinHelp/角色/";
         File directory = new File(imgPath).getParentFile();
         if (!directory.exists()) {
-            directory.mkdirs(); // 创建目录
+            subject.sendMessage("错误：data文件夹为空");
         }
         File imageFile = new File(imgPath + name + "/info.png");
         if (imageFile.exists()) {

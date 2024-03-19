@@ -115,23 +115,28 @@ public class jrys {
             g.fillRect(115,115,270,570);
             g.setColor(Color.red);
             g.fillRect(115,115,270,75);
-
-            //设置字体并绘制
             Font font = GFont.font;
             g.setFont(font);
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setColor(Color.WHITE);
+
             GetSentenceApi.getApi(fromQQ);
-            //String text = jrysRand();
-            String text = GetSentenceApi.getText(0);
+
+            //获取运势信息
+            String text = GetSentenceApi.getText("fortuneSummary");
+            //检测运势长度，自适应字体大小
+            if (text.length() >= 5) font = font.deriveFont(30f);
             int stringWidth = g.getFontMetrics().stringWidth(text);
             int x =(495 - stringWidth) /2;
             g.drawString(text, x, 170);
-            //String message = GetSentenceApi.get();
-            String message = GetSentenceApi.getText(1);
+
+            //获取运势建议
+            String message = GetSentenceApi.getText("unSignText");
             font = font.deriveFont(30f);
             g.setFont(font);
             g.setColor(Color.black);
+
+            //绘制竖向字体
             FontMetrics fontMetrics = g2d.getFontMetrics();
             int fontHeight = fontMetrics.getHeight() * 2 + 5;
             int msgY = 250;
@@ -148,12 +153,10 @@ public class jrys {
             g.setFont(font);
             g.setColor(Color.white);
             g.drawString("BOT阿洛娜&Travellerr", 550, 795);
-            // 保存合成后的图片
-            //ImageIO.write(combined, "PNG", new File("combined.png"));
             g.dispose();
             sendImage(sender, combined, subject, fromQQ);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -167,8 +170,8 @@ public class jrys {
             sendMsg.append(new At(fromQQ));
             sendMsg.append("\n");
             sendMsg.append(avatar);
-            sendMsg.append("\n" + GetSentenceApi.getText(0) + "\n" + GetSentenceApi.getText(3) + "\n" + GetSentenceApi.getText(1) + "\n" + GetSentenceApi.getText(2) + "\n\n抱歉Sensei，由于图片无法发送，这是阿洛娜手写出来的签！");
-            //Log.error("签到管理:签到图片发送错误!",e);
+            sendMsg.append("\n").append(GetSentenceApi.getText("fortuneSummary")).append("\n").append(GetSentenceApi.getText("luckyStar")).append("\n").append(GetSentenceApi.getText("signText")).append("\n").append(GetSentenceApi.getText("unSignText")).append("\n\n抱歉Sensei，由于图片无法发送，这是阿洛娜手写出来的签！");
+            Log.error("签到管理:签到图片发送错误!", e);
             subject.sendMessage(sendMsg.build());
             return;
         }
