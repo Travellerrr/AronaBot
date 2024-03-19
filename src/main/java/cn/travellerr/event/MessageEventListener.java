@@ -3,6 +3,7 @@ package cn.travellerr.event;
 import cn.travellerr.BlueArchive.jrys;
 import cn.travellerr.GehshinHelp.CharacterHelp;
 import cn.travellerr.tools.Log;
+import cn.travellerr.tools.Security;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
@@ -29,7 +30,9 @@ public class MessageEventListener extends SimpleListenerHost {
             case "#原神角色列表":
                 Contact.sendImage(subject, new File("./data/cn.travellerr.GenshinHelper/GenshinHelp/角色列表/info.png"));
                 return;
-
+            case "#监控":
+                Security.info(event);
+                return;
         }
         String info = "#原神攻略 (\\S+)";
         if (Pattern.matches(info, msg)) {
