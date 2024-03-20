@@ -9,6 +9,8 @@ import net.mamoe.mirai.message.data.MessageChainBuilder;
 import java.io.File;
 import java.text.DecimalFormat;
 
+
+@Deprecated(since = "已废弃")
 public class Security {
 
     static double cpu;
