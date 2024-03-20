@@ -2,10 +2,11 @@ package cn.travellerr.event;
 
 import cn.travellerr.BlueArchive.jrys;
 import cn.travellerr.GehshinHelp.CharacterHelp;
+import cn.travellerr.config.config;
 import cn.travellerr.tools.Log;
-import cn.travellerr.tools.Security;
 import cn.travellerr.tools.SecurityNew;
 import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
@@ -19,6 +20,9 @@ public class MessageEventListener extends SimpleListenerHost {
     @EventHandler()
     public void onMessage(@NotNull MessageEvent event) {
 
+        config config = cn.travellerr.config.config.INSTANCE;
+        User sender = event.getSender();
+        boolean owner = config.getOwner() == sender.getId();
         Contact subject = event.getSubject();
         String msg = event.getMessage().serializeToMiraiCode();
 
@@ -32,10 +36,10 @@ public class MessageEventListener extends SimpleListenerHost {
                 Contact.sendImage(subject, new File("./data/cn.travellerr.GenshinHelper/GenshinHelp/角色列表/info.png"));
                 return;
             case "#监控":
-                Security.info(event);
-                return;
-            case "#新监控":
-                SecurityNew.Security(event);
+                if (owner) {
+                    SecurityNew.Security(event);
+                    return;
+                } else subject.sendMessage("权限不足！");
         }
         String info = "#原神攻略 (\\S+)";
         if (Pattern.matches(info, msg)) {
