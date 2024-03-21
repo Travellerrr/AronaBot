@@ -4,6 +4,7 @@ package cn.travellerr.tools;
 import cn.hutool.system.oshi.CpuInfo;
 import cn.hutool.system.oshi.OshiUtil;
 import cn.travellerr.AronaBot;
+import cn.travellerr.config.config;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.AvatarSpec;
 import net.mamoe.mirai.contact.Contact;
@@ -66,6 +67,9 @@ public class SecurityNew {
 
     public static void info(ByteArrayOutputStream stream, Contact subject, long QQ) {
         Font = Font.deriveFont(40f);
+        config config = cn.travellerr.config.config.INSTANCE;
+
+        long botQQ = config.getBot();
         // 加载背景图
         try {
 
@@ -77,7 +81,6 @@ public class SecurityNew {
             Graphics2D g2d = combinedImage.createGraphics();
             g2d.drawImage(backgroundImage, 0, 0, null);
 
-            long botQQ = 3691933756L;
             Bot bot = Bot.getInstance(botQQ);
             BufferedImage avatar = ImageIO.read(new URL(bot.getAvatarUrl(AvatarSpec.LARGE)));
             //圆角处理
