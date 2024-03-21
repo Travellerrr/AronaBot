@@ -133,6 +133,7 @@ public class jrys {
             //获取运势建议
             String message = GetSentenceApi.getText("unSignText");
             font = font.deriveFont(30f);
+            if (message.length() >= 45) font = font.deriveFont(20f);
             g.setFont(font);
             g.setColor(Color.black);
 

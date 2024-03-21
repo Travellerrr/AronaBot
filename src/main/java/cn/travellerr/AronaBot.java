@@ -17,6 +17,7 @@ public final class AronaBot extends JavaPlugin {
 
     public static config config;
 
+    public static long startTime = System.currentTimeMillis();
     private AronaBot() {
         super(new JvmPluginDescriptionBuilder("cn.travellerr.AronaBot", version)
                 .name("AronaBot")
