@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 public class MessageEventListener extends SimpleListenerHost {
     @EventHandler()
     public void onMessage(@NotNull MessageEvent event) {
-
         config config = cn.travellerr.config.config.INSTANCE;
         User sender = event.getSender();
         boolean owner = config.getOwner() == sender.getId();
@@ -35,7 +34,7 @@ public class MessageEventListener extends SimpleListenerHost {
             case "#原神角色列表":
                 Contact.sendImage(subject, new File("./data/cn.travellerr.GenshinHelper/GenshinHelp/角色列表/info.png"));
                 return;
-            case "#监控":
+            case "#new监控":
                 if (owner) {
                     SecurityNew.Security(event);
                     return;
