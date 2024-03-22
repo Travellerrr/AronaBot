@@ -67,9 +67,11 @@ public class jrys {
             } else if (school == 0) {
                 picNum = 5;
             }
+            /*
             Log.info("School: " + school);
             Log.info("club: " + club);
             Log.info("picNum: " + picNum);
+            */
             // 读取背景图片和覆盖图片
             ClassLoader classLoader = jrys.class.getClassLoader();
             BufferedImage background = ImageIO.read(classLoader.getResourceAsStream("jrys/" + school + "/" + club + "/bg.png"));
@@ -120,7 +122,7 @@ public class jrys {
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setColor(Color.WHITE);
 
-            GetSentenceApi.getApi(fromQQ);
+            GetSentenceApi.getJrys(fromQQ);
 
             //获取运势信息
             String text = GetSentenceApi.getText("fortuneSummary");
@@ -132,14 +134,18 @@ public class jrys {
 
             //获取运势建议
             String message = GetSentenceApi.getText("unSignText");
+            int adaption = 5;
+            int moveX = 38;
             font = font.deriveFont(30f);
             if (message.length() >= 45) font = font.deriveFont(20f);
+            adaption = 0;
+            moveX = 32;
             g.setFont(font);
             g.setColor(Color.black);
 
             //绘制竖向字体
             FontMetrics fontMetrics = g2d.getFontMetrics();
-            int fontHeight = fontMetrics.getHeight() * 2 + 5;
+            int fontHeight = fontMetrics.getHeight() * 2 + adaption;
             int msgY = 250;
             int msgX = 310;
             for(int msgLength = 0; msgLength < message.length()-1; msgLength +=1) {
@@ -147,7 +153,7 @@ public class jrys {
                 msgY += fontHeight;
                 if(msgY > 650) {
                     msgY = 250;
-                    msgX -= 38;
+                    msgX -= moveX;
                 }
             }
             font = font.deriveFont(20f);

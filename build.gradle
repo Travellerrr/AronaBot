@@ -17,6 +17,7 @@ dependencies {
     implementation group: 'cn.hutool', name: 'hutool-all', version: '5.8.25'
     implementation 'com.github.oshi:oshi-core:3.5.0'
     implementation 'org.jfree:jfreechart:1.5.3'
+    implementation 'org.xerial:sqlite-jdbc:3.36.0.3'
 }
 mirai {
     jvmTarget JavaVersion.VERSION_1_8
