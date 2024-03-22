@@ -8,7 +8,7 @@ import java.io.IOException;
 public class Log {
 
     private static final MiraiLogger log = AronaBot.INSTANCE.getLogger();
-    private static final String name = "原神帮助-";
+    private static final String name = "阿洛娜杂项-";
 
     public static void info(String msg) {
         log.info(name + msg);
