@@ -20,7 +20,7 @@ public class CharacterHelp {
 
     public static void info(Contact subject, String name) {
         // 发送图像
-        String imgPath = "./data/cn.travellerr.GenshinHelper/GenshinHelp/角色/";
+        String imgPath = "./data/cn.travellerr.AronaBot/GenshinHelp/角色/";
         File directory = new File(imgPath).getParentFile();
         if (!directory.exists()) {
             subject.sendMessage("错误：data文件夹为空");
