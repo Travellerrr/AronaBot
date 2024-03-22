@@ -137,9 +137,11 @@ public class jrys {
             int adaption = 5;
             int moveX = 38;
             font = font.deriveFont(30f);
-            if (message.length() >= 45) font = font.deriveFont(20f);
-            adaption = 0;
-            moveX = 32;
+            if (message.length() >= 45) {
+                font = font.deriveFont(20f);
+                adaption = 0;
+                moveX = 32;
+            }
             g.setFont(font);
             g.setColor(Color.black);
 
@@ -184,22 +186,6 @@ public class jrys {
         }
         net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(ExternalResource.create(new ByteArrayInputStream(stream.toByteArray())));
         subject.sendMessage(sendImage.plus(new At(fromQQ)));
-    }
-
-    // 生成随机数获取运势
-
-    @Deprecated(since = "已废弃")
-    public static String jrysRand() {
-        Random rand = new Random();
-        int randnum = rand.nextInt(101);
-        if(randnum < 18) return "凶";
-        else if (randnum <53) return "末吉";
-        else if (randnum <58) return "末小吉";
-        else if (randnum< 62) return "小吉";
-        else if (randnum <65) return  "半吉";
-        else if (randnum < 71) return  "吉";
-        else if (randnum < 85) return "大吉";
-        else return "超大吉";
     }
 
 }
