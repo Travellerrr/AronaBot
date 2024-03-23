@@ -28,9 +28,6 @@ public class MessageEventListener extends SimpleListenerHost {
         switch (msg) {
             case "测试":
                 return;
-            case "帮助":
-                subject.sendMessage("测试");
-                return;
             case "#原神角色列表":
                 Contact.sendImage(subject, new File("./data/cn.travellerr.GenshinHelper/GenshinHelp/角色列表/info.png"));
                 return;
