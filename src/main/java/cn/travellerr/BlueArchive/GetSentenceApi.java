@@ -1,5 +1,6 @@
 package cn.travellerr.BlueArchive;
 
+import cn.travellerr.tools.Log;
 import com.google.gson.*;
 
 import java.io.BufferedReader;
@@ -84,8 +85,7 @@ public class GetSentenceApi {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return;
+            throw new RuntimeException("出错了~", e);
         }
 
         // 创建目录，如果已存在则不会创建
@@ -103,7 +103,7 @@ public class GetSentenceApi {
             }
             getData(conn, qqNumber);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("出错了~", e);
         }
     }
 
@@ -123,7 +123,7 @@ public class GetSentenceApi {
         try {
             Files.createDirectories(path);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.error("出错了~", e);
         }
     }
 
@@ -167,7 +167,7 @@ public class GetSentenceApi {
                 "ID INTEGER PRIMARY KEY, " +
                 "QQ INTEGER, " +
                 "fortuneID INTEGER, " + // 将Id字段重命名为fortuneID
-                "Date DATETIME DEFAULT CURRENT_TIMESTAMP)";
+                "Date TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%S', 'now', 'localtime')))";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.executeUpdate();
         }
@@ -188,7 +188,7 @@ public class GetSentenceApi {
             }*/
         } catch (SQLException e) {
             // 插入失败时的异常处理
-            e.printStackTrace();
+            throw new RuntimeException("出错了~", e);
         }
     }
 
@@ -223,7 +223,7 @@ public class GetSentenceApi {
             }
         } catch (SQLException e) {
             // 处理SQL异常
-            e.printStackTrace();
+            throw new RuntimeException("出错了~", e);
         }
     }
 
