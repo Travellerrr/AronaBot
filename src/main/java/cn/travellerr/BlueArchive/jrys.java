@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -125,22 +126,30 @@ public class jrys {
             GetSentenceApi.getJrys(fromQQ);
 
             //获取运势信息
-            String text = GetSentenceApi.getText("fortuneSummary");
+            String text = GetSentenceApi.fortuneSummary;
             //检测运势长度，自适应字体大小
-            if (text.length() >= 5) font = font.deriveFont(30f);
+            int textX = 495;
+            if (text.length() >= 5) {
+                font = font.deriveFont(25f);
+                textX = 700;
+            }
             int stringWidth = g.getFontMetrics().stringWidth(text);
-            int x =(495 - stringWidth) /2;
-            g.drawString(text, x, 170);
+            g.setFont(font);
+            int x = (textX - stringWidth) / 2;
+            System.out.println(x);
+            g.drawString(text, x, 165);
 
             //获取运势建议
-            String message = GetSentenceApi.getText("unSignText");
+            String message = GetSentenceApi.unSignText;
             int adaption = 5;
             int moveX = 38;
+            int msgX = 310;
             font = font.deriveFont(30f);
             if (message.length() >= 45) {
                 font = font.deriveFont(20f);
                 adaption = 0;
                 moveX = 32;
+                msgX = 350;
             }
             g.setFont(font);
             g.setColor(Color.black);
@@ -148,13 +157,12 @@ public class jrys {
             //绘制竖向字体
             FontMetrics fontMetrics = g2d.getFontMetrics();
             int fontHeight = fontMetrics.getHeight() * 2 + adaption;
-            int msgY = 250;
-            int msgX = 310;
+            int msgY = 230;
             for(int msgLength = 0; msgLength < message.length()-1; msgLength +=1) {
                 g.drawString(String.valueOf(message.charAt(msgLength)), msgX, msgY);
                 msgY += fontHeight;
-                if(msgY > 650) {
-                    msgY = 250;
+                if (msgY > 625) {
+                    msgY = 230;
                     msgX -= moveX;
                 }
             }
@@ -162,6 +170,11 @@ public class jrys {
             g.setFont(font);
             g.setColor(Color.white);
             g.drawString("BOT阿洛娜&Travellerr", 550, 795);
+
+
+            BufferedImage stamp = ImageIO.read(classLoader.getResourceAsStream(stamp(GetSentenceApi.luckyStar)));
+            g.drawImage(stamp, 315, 618, null);
+
             g.dispose();
             sendImage(sender, combined, subject, fromQQ);
         } catch (IOException e) {
@@ -179,7 +192,7 @@ public class jrys {
             sendMsg.append(new At(fromQQ));
             sendMsg.append("\n");
             sendMsg.append(avatar);
-            sendMsg.append("\n").append(GetSentenceApi.getText("fortuneSummary")).append("\n").append(GetSentenceApi.getText("luckyStar")).append("\n").append(GetSentenceApi.getText("signText")).append("\n").append(GetSentenceApi.getText("unSignText")).append("\n\n抱歉Sensei，由于图片无法发送，这是阿洛娜手写出来的签！");
+            sendMsg.append("\n").append(GetSentenceApi.fortuneSummary).append("\n").append(GetSentenceApi.luckyStar).append("\n").append(GetSentenceApi.signText).append("\n").append(GetSentenceApi.unSignText).append("\n\n抱歉Sensei，由于图片无法发送，这是阿洛娜手写出来的签！");
             Log.error("签到管理:签到图片发送错误!", e);
             subject.sendMessage(sendMsg.build());
             return;
@@ -188,4 +201,19 @@ public class jrys {
         subject.sendMessage(sendImage.plus(new At(fromQQ)));
     }
 
+    private static String stamp(String luckyStar) {
+        if (Objects.equals(luckyStar, "☆☆☆☆☆☆☆") || Objects.equals(luckyStar, "★☆☆☆☆☆☆") || Objects.equals(luckyStar, "★★☆☆☆☆☆")) {
+            Random random = new Random();
+            int randImg = random.nextInt(4);
+            return "jrys/心奈印章/0_" + randImg + ".png";
+        }
+        if (Objects.equals(luckyStar, "★★★☆☆☆☆") || Objects.equals(luckyStar, "★★★★☆☆☆")) {
+            return "jrys/心奈印章/59.png";
+        }
+        if (Objects.equals(luckyStar, "★★★★★☆☆") || Objects.equals(luckyStar, "★★★★★★☆")) {
+            return "jrys/心奈印章/60.png";
+        } else {
+            return "jrys/心奈印章/100.png";
+        }
+    }
 }

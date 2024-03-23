@@ -233,6 +233,7 @@ public class GetSentenceApi {
     }
 
 
+    @Deprecated(since = "写了个什么玩意")
     public static String getText(String place) {
         if (Objects.equals(place, "fortuneSummary")) return fortuneSummary;
         if (Objects.equals(place, "signText")) return signText;
