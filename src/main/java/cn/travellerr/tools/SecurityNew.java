@@ -8,17 +8,19 @@ import cn.travellerr.config.config;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.AvatarSpec;
 import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.utils.ExternalResource;
-import org.jetbrains.annotations.NotNull;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
+import oshi.SystemInfo;
+import oshi.hardware.HardwareAbstractionLayer;
+import oshi.hardware.NetworkIF;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -31,11 +33,8 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Objects;
 
 public class SecurityNew {
 
@@ -45,9 +44,11 @@ public class SecurityNew {
     static long TotalDisk;
     static long FreeSpaceDisk;
     static long UsedDisk;
+    static String getSent;
+    static String getRecv;
 
     static Font Font = GFont.font;
-
+/*
     public static Map<String, String> getMatcher(@NotNull GroupMessageEvent event) {
         Map<String, String> map = new HashMap<>();
         String text = event.getMessage().get(0).toString();
@@ -63,6 +64,7 @@ public class SecurityNew {
         }
         return map;
     }
+    */
 
 
     public static void info(ByteArrayOutputStream stream, Contact subject, long QQ) {
@@ -73,7 +75,7 @@ public class SecurityNew {
         // 加载背景图
         try {
 
-            BufferedImage backgroundImage = ImageIO.read(SecurityNew.class.getResourceAsStream("/background.png"));
+            BufferedImage backgroundImage = ImageIO.read(Objects.requireNonNull(SecurityNew.class.getResourceAsStream("/background.png")));
             // 创建一个新的 BufferedImage，宽高与背景图相同
             BufferedImage combinedImage = new BufferedImage(backgroundImage.getWidth(), backgroundImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 
@@ -84,7 +86,7 @@ public class SecurityNew {
             Bot bot = Bot.getInstance(botQQ);
             BufferedImage avatar = ImageIO.read(new URL(bot.getAvatarUrl(AvatarSpec.LARGE)));
             //圆角处理
-            BufferedImage avatarRounder = makeRoundedCorner(avatar, 50);
+            BufferedImage avatarRounder = makeRoundedCorner(avatar);
 
 
             g2d.drawImage(avatarRounder, 75, 180, null);
@@ -252,12 +254,23 @@ public class SecurityNew {
             String system = System.getProperty("os.name");
             g2d.drawString(system, 80, 855);
 
-            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy年M月d日 EEEE HH:mm:ss", Locale.CHINA);
-
-            Font = Font.deriveFont(25f);
+            Font = Font.deriveFont(30f);
             Font = Font.deriveFont(java.awt.Font.PLAIN);
             g2d.setFont(Font);
-            g2d.drawString(outputFormat.format(new Date()), 80, 905);
+            g2d.drawString("网络流量", 80, 905);
+            Font = Font.deriveFont(20f);
+            g2d.setFont(Font);
+            g2d.setColor(new Color(0, 160, 0));
+            g2d.drawString("发送: " + getSent, 90, 935);
+            g2d.setColor(new Color(180, 0, 0));
+            g2d.drawString("接收: " + getRecv, 90, 965);
+            g2d.setColor(Color.BLACK);
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy年M月d日 EEEE HH:mm:ss", Locale.CHINA);
+
+
+            Font = Font.deriveFont(30f);
+            g2d.setFont(Font);
+            g2d.drawString(outputFormat.format(new Date()), 80, 1015);
             ImageIO.write(combinedImage, "png", stream);
         } catch (IOException e) {
             MessageChainBuilder messages = new MessageChainBuilder();
@@ -291,21 +304,38 @@ public class SecurityNew {
         }
     }
 
+    public static void getBytes() {
+        SystemInfo systemInfo = new SystemInfo();
+        HardwareAbstractionLayer hardware = systemInfo.getHardware();
+        DecimalFormat df = new DecimalFormat("#.##");
+        NetworkIF[] networkIFs = hardware.getNetworkIFs();
+        long getBytesRecv = 0;
+        long getBytesSent = 0;
+        for (NetworkIF net : networkIFs) {
+            getBytesRecv += net.getBytesRecv();
+            getBytesSent += net.getBytesSent();
+        }
+        getRecv = df.format((double) getBytesRecv / (1024 * 1024)) + "MB";
+        getSent = df.format((double) getBytesSent / (1024 * 1024)) + "MB";
+    }
 
     public static void Security(MessageEvent event) {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         Contact subject = event.getSubject();
-        Map<String, String> matcher = getMatcher((GroupMessageEvent) event);
-        long fromQQ = Long.parseLong(matcher.get("来源QQ号"));
-        subject.sendMessage(new At(fromQQ).plus("Sensei\n状态获取中，请稍等"));
+        User user = event.getSender();
+        subject.sendMessage(new At(user.getId()).plus("Sensei\n状态获取中，请稍等"));
         getOsInfo();
         getMemoryInfo();
         getDiskUsed();
-        info(stream, subject, fromQQ);
+        getBytes();
+        info(stream, subject, user.getId());
         try {
-            net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(ExternalResource.create(new ByteArrayInputStream(stream.toByteArray())));
-            subject.sendMessage(sendImage.plus(new At(fromQQ)));
+            ExternalResource resource = ExternalResource.create(new ByteArrayInputStream(stream.toByteArray()));
+            net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(resource);
+            subject.sendMessage(sendImage.plus(new At(user.getId())));
+            resource.close();
+
         } catch (Exception e) {
             e.fillInStackTrace();
         }
@@ -315,7 +345,7 @@ public class SecurityNew {
      * from HuyanEconomy
      * By chahuyun
      */
-    private static BufferedImage makeRoundedCorner(BufferedImage image, int cornerRadius) {
+    private static BufferedImage makeRoundedCorner(BufferedImage image) {
         int w = image.getWidth();
         int h = image.getHeight();
         BufferedImage output = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -329,7 +359,7 @@ public class SecurityNew {
         原图切圆边角
          */
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.fillRoundRect(0, 0, w, h, cornerRadius, cornerRadius);
+        g2.fillRoundRect(0, 0, w, h, 50, 50);
         g2.setComposite(AlphaComposite.SrcIn);
         /*结束*/
 

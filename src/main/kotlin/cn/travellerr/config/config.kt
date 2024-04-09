@@ -10,4 +10,7 @@ object config : AutoSavePluginConfig("Config") {
 
     @ValueDescription("主机器人\n")
     var bot: Long by value()
+
+    @ValueDescription("监控授权\n")
+    var user: List<Long> by value()
 }
