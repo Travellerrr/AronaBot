@@ -6,6 +6,7 @@ import cn.travellerr.config.config;
 import cn.travellerr.tools.Log;
 import cn.travellerr.tools.SecurityNew;
 import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.regex.Pattern;
 
+
 public class MessageEventListener extends SimpleListenerHost {
     @EventHandler()
     public void onMessage(@NotNull MessageEvent event) {
@@ -24,6 +26,8 @@ public class MessageEventListener extends SimpleListenerHost {
         boolean owner = config.getOwner() == sender.getId();
         Contact subject = event.getSubject();
         String msg = event.getMessage().serializeToMiraiCode();
+        boolean user = config.getUser().contains(sender.getId());
+
 
         switch (msg) {
             case "测试":
@@ -32,10 +36,27 @@ public class MessageEventListener extends SimpleListenerHost {
                 Contact.sendImage(subject, new File("./data/cn.travellerr.GenshinHelper/GenshinHelp/角色列表/info.png"));
                 return;
             case "#监控":
-                if (owner) {
+            case "#状态":
+
+                GroupMessageEvent groupMessageEvent = (GroupMessageEvent) event;
+                Group group = groupMessageEvent.getGroup();
+                boolean groupOwner = group.getOwner().getId() == sender.getId();
+                if (user || groupOwner || owner) {
                     SecurityNew.Security(event);
-                    return;
                 } else subject.sendMessage("权限不足！");
+                return;
+                /*
+            case "#网页":
+                subject.sendMessage(new MusicShare(
+                        MusicKind.NeteaseCloudMusic,
+                        "QQ机器人阿洛娜指令信息",
+                        "作者：Travellerr",
+                        "https://www.travellerr.cn/20240224169",
+                        "http://www.travellerr.cn/wp-content/uploads/2024/03/favicon.png",
+                        "https://www.travellerr.cn/20240224169",
+                        "[帮助] QQ机器人阿洛娜指令信息"));
+                return;
+                */
         }
         String info = "#原神攻略 (\\S+)";
         if (Pattern.matches(info, msg)) {

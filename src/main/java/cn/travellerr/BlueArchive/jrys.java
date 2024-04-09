@@ -75,8 +75,8 @@ public class jrys {
             */
             // 读取背景图片和覆盖图片
             ClassLoader classLoader = jrys.class.getClassLoader();
-            BufferedImage background = ImageIO.read(classLoader.getResourceAsStream("jrys/" + school + "/" + club + "/bg.png"));
-            BufferedImage cover = ImageIO.read(classLoader.getResourceAsStream("jrys/" + school + "/" + club + "/" + (index % picNum == 0 ? picNum : index % picNum) + ".png"));
+            BufferedImage background = ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream("jrys/" + school + "/" + club + "/bg.png")));
+            BufferedImage cover = ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream("jrys/" + school + "/" + club + "/" + (index % picNum == 0 ? picNum : index % picNum) + ".png")));
             index++;
 
             int newWidth = (int)(cover.getWidth() /1.6); // 缩小为原来的一半
@@ -157,12 +157,12 @@ public class jrys {
             //绘制竖向字体
             FontMetrics fontMetrics = g2d.getFontMetrics();
             int fontHeight = fontMetrics.getHeight() * 2 + adaption;
-            int msgY = 230;
+            int msgY = 220;
             for(int msgLength = 0; msgLength < message.length()-1; msgLength +=1) {
                 g.drawString(String.valueOf(message.charAt(msgLength)), msgX, msgY);
                 msgY += fontHeight;
-                if (msgY > 625) {
-                    msgY = 230;
+                if (msgY > 618) {
+                    msgY = 220;
                     msgX -= moveX;
                 }
             }
@@ -172,7 +172,7 @@ public class jrys {
             g.drawString("BOT阿洛娜&Travellerr", 550, 795);
 
 
-            BufferedImage stamp = ImageIO.read(classLoader.getResourceAsStream(stamp(GetSentenceApi.luckyStar)));
+            BufferedImage stamp = ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream(stamp(GetSentenceApi.luckyStar))));
             g.drawImage(stamp, 315, 618, null);
 
             g.dispose();
