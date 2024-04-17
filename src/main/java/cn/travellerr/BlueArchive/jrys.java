@@ -6,6 +6,7 @@ import net.mamoe.mirai.contact.AvatarSpec;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.utils.ExternalResource;
@@ -44,12 +45,10 @@ public class jrys {
         return map;
     }
 
-    public static void info(GroupMessageEvent event) {
+    public static void info(MessageEvent event) {
         Contact subject = event.getSubject();
         User sender = event.getSender();
-        Map<String, String> matcher = getMatcher(event);
-        long fromQQ = Long.parseLong(matcher.get("来源QQ号"));
-        subject.sendMessage(new At(fromQQ).plus("\nSensei请稍等！阿洛娜这就为您抽签！"));
+        subject.sendMessage(new At(sender.getId()).plus("\nSensei请稍等！阿洛娜这就为您抽签！"));
 
         try {
             int schoolNum = 3;  //学校数量
@@ -123,7 +122,7 @@ public class jrys {
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setColor(Color.WHITE);
 
-            GetSentenceApi.getJrys(fromQQ);
+            GetSentenceApi.getJrys(sender.getId());
 
             //获取运势信息
             String text = GetSentenceApi.fortuneSummary;
@@ -176,7 +175,7 @@ public class jrys {
             g.drawImage(stamp, 315, 618, null);
 
             g.dispose();
-            sendImage(sender, combined, subject, fromQQ);
+            sendImage(sender, combined, subject, sender.getId());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -197,8 +196,10 @@ public class jrys {
             subject.sendMessage(sendMsg.build());
             return;
         }
-        net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(ExternalResource.create(new ByteArrayInputStream(stream.toByteArray())));
+        ExternalResource resource = ExternalResource.create(new ByteArrayInputStream(stream.toByteArray()));
+        net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(resource);
         subject.sendMessage(sendImage.plus(new At(fromQQ)));
+        resource.close();
     }
 
     private static String stamp(String luckyStar) {

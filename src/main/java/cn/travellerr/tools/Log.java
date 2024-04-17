@@ -21,4 +21,8 @@ public class Log {
     public static void error(String msg, IOException e) {
         log.error(name + msg);
     }
+
+    public static void errorWithoutE(String msg) {
+        log.error(name + msg);
+    }
 }

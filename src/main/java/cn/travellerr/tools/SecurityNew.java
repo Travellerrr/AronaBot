@@ -48,23 +48,34 @@ public class SecurityNew {
     static String getRecv;
 
     static Font Font = GFont.font;
-/*
-    public static Map<String, String> getMatcher(@NotNull GroupMessageEvent event) {
-        Map<String, String> map = new HashMap<>();
-        String text = event.getMessage().get(0).toString();
-        String regex = "mirai:source:ids=\\[(.*?)], internalIds=\\[(.*?)], from group (.*?) to (.*?) at (.*?)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(text);
-        if (matcher.find()) {
-            map.put("源ID", matcher.group(1));
-            map.put("内部ID", matcher.group(2));
-            map.put("来源QQ号", matcher.group(3));
-            map.put("目标组ID", matcher.group(4));
-            map.put("时间戳", matcher.group(5));
-        }
-        return map;
+
+    public static void drawPieChart(Graphics2D g2d, String title, DefaultPieDataset<String> dataset, int x, int y) {
+        JFreeChart chart = ChartFactory.createPieChart(
+                title,
+                dataset,
+                false,
+                false,
+                false
+        );
+
+        chart.setBorderVisible(false);
+        chart.setBackgroundPaint(null);
+        chart.setBackgroundImageAlpha(0.0f);
+        PiePlot plot = (PiePlot) chart.getPlot();
+        plot.setCircular(true);
+        plot.setBackgroundAlpha(0.0f);
+        plot.setOutlinePaint(null);
+        plot.setLabelGenerator(null);
+        plot.setShadowGenerator(null);
+        plot.setShadowPaint(null);
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setSize(200, 130);
+        Color transparentColor = new Color(0, 0, 0, 0); // 完全透明
+        chartPanel.setBackground(transparentColor);
+        g2d.translate(x, y);
+        chartPanel.paint(g2d);
     }
-    */
 
 
     public static void info(ByteArrayOutputStream stream, Contact subject, long QQ) {
@@ -82,8 +93,7 @@ public class SecurityNew {
             // 在合成图像上绘制背景图
             Graphics2D g2d = combinedImage.createGraphics();
             g2d.drawImage(backgroundImage, 0, 0, null);
-
-            Bot bot = Bot.getInstance(botQQ);
+            Bot bot = subject.getBot();
             BufferedImage avatar = ImageIO.read(new URL(bot.getAvatarUrl(AvatarSpec.LARGE)));
             //圆角处理
             BufferedImage avatarRounder = makeRoundedCorner(avatar);
@@ -105,40 +115,43 @@ public class SecurityNew {
              * 待优化
              * TODO 封装函数
              */
-
-            // 创建饼图数据集
             DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
             dataset.setValue("Used Cpu", cpu);
             dataset.setValue("Total Cpu", 100 - cpu);
+            // 创建饼图数据集
 
-            JFreeChart chart = ChartFactory.createPieChart(
-                    "",
-                    dataset,
-                    false,
-                    false,
-                    false
-            );
+//
+//            JFreeChart chart = ChartFactory.createPieChart(
+//                    "",
+//                    dataset,
+//                    false,
+//                    false,
+//                    false
+//            );
+//
+//            chart.setBorderVisible(false);
+//            chart.setBackgroundPaint(null);
+//            chart.setBackgroundImageAlpha(0.0f);
+//
+//            PiePlot plot = (PiePlot) chart.getPlot();
+//            plot.setCircular(true);
+//            plot.setBackgroundAlpha(0.0f);
+//            plot.setOutlinePaint(null);
+//            plot.setLabelGenerator(null);
+//            plot.setShadowGenerator(null);
+//            plot.setShadowPaint(null);
+//
+//
+//            // 创建一个 ChartPanel 并绘制饼图
+//            ChartPanel chartPanel = new ChartPanel(chart);
+//            chartPanel.setSize(200, 130);
+//            Color transparentColor = new Color(0, 0, 0, 0); // 完全透明
+//            chartPanel.setBackground(transparentColor);
+//            g2d.translate(100, 475);
+//            chartPanel.paint(g2d);
 
-            chart.setBorderVisible(false);
-            chart.setBackgroundPaint(null);
-            chart.setBackgroundImageAlpha(0.0f);
+            drawPieChart(g2d, "", dataset, 100, 475);
 
-            PiePlot plot = (PiePlot) chart.getPlot();
-            plot.setCircular(true);
-            plot.setBackgroundAlpha(0.0f);
-            plot.setOutlinePaint(null);
-            plot.setLabelGenerator(null);
-            plot.setShadowGenerator(null);
-            plot.setShadowPaint(null);
-
-
-            // 创建一个 ChartPanel 并绘制饼图
-            ChartPanel chartPanel = new ChartPanel(chart);
-            chartPanel.setSize(200, 130);
-            Color transparentColor = new Color(0, 0, 0, 0); // 完全透明
-            chartPanel.setBackground(transparentColor);
-            g2d.translate(100, 475);
-            chartPanel.paint(g2d);
             g2d.setColor(Color.WHITE);
             g2d.fillOval(69, 34, 60, 60);
             g2d.setFont(Font);
@@ -162,31 +175,31 @@ public class SecurityNew {
             dataset = new DefaultPieDataset<>();
             dataset.setValue("Used Memory", UsedMem);
             dataset.setValue("Total Memory", TotalMem - UsedMem);
-
-            chart = ChartFactory.createPieChart(
-                    "",
-                    dataset,
-                    false,
-                    false,
-                    false
-            );
-
-            chart.setBorderVisible(false);
-            chart.setBackgroundPaint(null);
-            chart.setBackgroundImageAlpha(0.0f);
-            plot = (PiePlot) chart.getPlot();
-            plot.setCircular(true);
-            plot.setBackgroundAlpha(0.0f);
-            plot.setOutlinePaint(null);
-            plot.setLabelGenerator(null);
-            plot.setShadowGenerator(null);
-            plot.setShadowPaint(null);
-
-            chartPanel = new ChartPanel(chart);
-            chartPanel.setSize(200, 130);
-            chartPanel.setBackground(transparentColor);
-            g2d.translate(230, 0);
-            chartPanel.paint(g2d);
+            drawPieChart(g2d, "", dataset, 230, 0);
+//            chart = ChartFactory.createPieChart(
+//                    "",
+//                    dataset,
+//                    false,
+//                    false,
+//                    false
+//            );
+//
+//            chart.setBorderVisible(false);
+//            chart.setBackgroundPaint(null);
+//            chart.setBackgroundImageAlpha(0.0f);
+//            plot = (PiePlot) chart.getPlot();
+//            plot.setCircular(true);
+//            plot.setBackgroundAlpha(0.0f);
+//            plot.setOutlinePaint(null);
+//            plot.setLabelGenerator(null);
+//            plot.setShadowGenerator(null);
+//            plot.setShadowPaint(null);
+//
+//            chartPanel = new ChartPanel(chart);
+//            chartPanel.setSize(200, 130);
+//            chartPanel.setBackground(transparentColor);
+//            g2d.translate(230, 0);
+//            chartPanel.paint(g2d);
             g2d.setColor(Color.WHITE);
             g2d.fillOval(69, 34, 60, 60);
 
@@ -207,31 +220,31 @@ public class SecurityNew {
             dataset = new DefaultPieDataset<>();
             dataset.setValue("Used Disk", UsedDisk);
             dataset.setValue("Total Disk", FreeSpaceDisk);
-
-            chart = ChartFactory.createPieChart(
-                    "",
-                    dataset,
-                    false,
-                    false,
-                    false
-            );
-
-            chart.setBorderVisible(false);
-            chart.setBackgroundPaint(null);
-            chart.setBackgroundImageAlpha(0.0f);
-            plot = (PiePlot) chart.getPlot();
-            plot.setCircular(true);
-            plot.setBackgroundAlpha(0.0f);
-            plot.setOutlinePaint(null);
-            plot.setLabelGenerator(null);
-            plot.setShadowGenerator(null);
-            plot.setShadowPaint(null);
-
-            chartPanel = new ChartPanel(chart);
-            chartPanel.setSize(200, 130);
-            chartPanel.setBackground(transparentColor);
-            g2d.translate(230, 0);
-            chartPanel.paint(g2d);
+            drawPieChart(g2d, "", dataset, 230, 0);
+//            chart = ChartFactory.createPieChart(
+//                    "",
+//                    dataset,
+//                    false,
+//                    false,
+//                    false
+//            );
+//
+//            chart.setBorderVisible(false);
+//            chart.setBackgroundPaint(null);
+//            chart.setBackgroundImageAlpha(0.0f);
+//            plot = (PiePlot) chart.getPlot();
+//            plot.setCircular(true);
+//            plot.setBackgroundAlpha(0.0f);
+//            plot.setOutlinePaint(null);
+//            plot.setLabelGenerator(null);
+//            plot.setShadowGenerator(null);
+//            plot.setShadowPaint(null);
+//
+//            chartPanel = new ChartPanel(chart);
+//            chartPanel.setSize(200, 130);
+//            chartPanel.setBackground(transparentColor);
+//            g2d.translate(230, 0);
+//            chartPanel.paint(g2d);
             g2d.setColor(Color.WHITE);
             g2d.fillOval(69, 34, 60, 60);
             // 保存合成后的图像到文件
@@ -272,6 +285,7 @@ public class SecurityNew {
             g2d.setFont(Font);
             g2d.drawString(outputFormat.format(new Date()), 80, 1015);
             ImageIO.write(combinedImage, "png", stream);
+
         } catch (IOException e) {
             MessageChainBuilder messages = new MessageChainBuilder();
             messages.append(new At(QQ)).append("唔……什亭之匣好像出了些问题呢……图片无法发送，阿洛娜就用文字代替吧！\nCPU使用率: ").append(String.valueOf(cpu)).append("%\n总内存: ").append(String.valueOf(TotalMem)).append("GB\n使用内存: ").append(String.valueOf(UsedMem)).append("GB\n总磁盘: ").append(String.valueOf(TotalDisk)).append("GB\n剩余空间: ").append(String.valueOf(FreeSpaceDisk)).append("GB\n使用空间: ").append(String.valueOf(UsedDisk)).append("GB");
@@ -317,6 +331,7 @@ public class SecurityNew {
         }
         getRecv = df.format((double) getBytesRecv / (1024 * 1024)) + "MB";
         getSent = df.format((double) getBytesSent / (1024 * 1024)) + "MB";
+
     }
 
     public static void Security(MessageEvent event) {
@@ -335,6 +350,7 @@ public class SecurityNew {
             net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(resource);
             subject.sendMessage(sendImage.plus(new At(user.getId())));
             resource.close();
+            stream.close();
 
         } catch (Exception e) {
             e.fillInStackTrace();

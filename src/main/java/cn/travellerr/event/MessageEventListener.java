@@ -1,21 +1,16 @@
 package cn.travellerr.event;
 
 import cn.travellerr.BlueArchive.jrys;
-import cn.travellerr.GehshinHelp.CharacterHelp;
 import cn.travellerr.config.config;
 import cn.travellerr.tools.Log;
 import cn.travellerr.tools.SecurityNew;
+import cn.travellerr.tools.api;
 import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.File;
-import java.util.regex.Pattern;
 
 
 public class MessageEventListener extends SimpleListenerHost {
@@ -24,58 +19,46 @@ public class MessageEventListener extends SimpleListenerHost {
         config config = cn.travellerr.config.config.INSTANCE;
         User sender = event.getSender();
         boolean owner = config.getOwner() == sender.getId();
+        String prefix = config.getPrefix();
         Contact subject = event.getSubject();
         String msg = event.getMessage().serializeToMiraiCode();
-        boolean user = config.getUser().contains(sender.getId());
-
-
-        switch (msg) {
-            case "测试":
-                return;
-            case "#原神角色列表":
-                Contact.sendImage(subject, new File("./data/cn.travellerr.GenshinHelper/GenshinHelp/角色列表/info.png"));
-                return;
-            case "#监控":
-            case "#状态":
-
-                GroupMessageEvent groupMessageEvent = (GroupMessageEvent) event;
-                Group group = groupMessageEvent.getGroup();
-                boolean groupOwner = group.getOwner().getId() == sender.getId();
-                if (user || groupOwner || owner) {
+        if (msg.startsWith(prefix)) {
+            msg = msg.substring(1);
+            switch (msg) {
+                case "测试":
+                    return;
+                /*case "原神角色列表":
+                    Contact.sendImage(subject, new File("./data/cn.travellerr.GenshinHelper/GenshinHelp/角色列表/info.png"));
+                    return;*/
+                case "监控":
+                case "状态":
                     SecurityNew.Security(event);
-                } else subject.sendMessage("权限不足！");
+                    return;
+                case "卡片":
+                    api.use(event);
+                    return;
+                case "随机柴郡":
+                    api.chaiq(event);
+                    return;
+                case "今日运势":
+                case "jrys":
+                    jrys.info(event);
+                    Log.info("运势指令");
+                    return;
+            }
+            /*String info = "原神攻略 (\\S+)";
+            if (Pattern.matches(info, msg)) {
+                Log.info("攻略指令");
+                CharacterHelp.help(event);
                 return;
-                /*
-            case "#网页":
-                subject.sendMessage(new MusicShare(
-                        MusicKind.NeteaseCloudMusic,
-                        "QQ机器人阿洛娜指令信息",
-                        "作者：Travellerr",
-                        "https://www.travellerr.cn/20240224169",
-                        "http://www.travellerr.cn/wp-content/uploads/2024/03/favicon.png",
-                        "https://www.travellerr.cn/20240224169",
-                        "[帮助] QQ机器人阿洛娜指令信息"));
+            }
+            String draw = "画\\s+(\\S+\\s*)*";
+            if (Pattern.matches(draw, msg)) {
+                Log.info("攻略指令");
+                api.draw(event);
                 return;
-                */
-        }
-        String info = "#原神攻略 (\\S+)";
-        if (Pattern.matches(info, msg)) {
-            Log.info("攻略指令");
-            CharacterHelp.help(event);
-        }
+            }*/
 
-
-    }
-
-    @EventHandler
-    public void onGroupMessgae(@NotNull GroupMessageEvent event) {
-        Contact subject = event.getSubject();
-        String msg = event.getMessage().serializeToMiraiCode();
-        switch (msg) {
-            case "#今日运势":
-            case "#jrys":
-                jrys.info(event);
-                Log.info("运势指令");
         }
     }
 }

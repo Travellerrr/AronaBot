@@ -13,4 +13,7 @@ object config : AutoSavePluginConfig("Config") {
 
     @ValueDescription("监控授权\n")
     var user: List<Long> by value()
+
+    @ValueDescription("指令前缀\n")
+    var prefix: String by value("/")
 }
