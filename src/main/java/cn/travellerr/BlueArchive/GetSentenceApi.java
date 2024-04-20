@@ -16,7 +16,6 @@ import java.nio.file.Paths;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -233,11 +232,4 @@ public class GetSentenceApi {
     }
 
 
-    @Deprecated(since = "写了个什么玩意")
-    public static String getText(String place) {
-        if (Objects.equals(place, "fortuneSummary")) return fortuneSummary;
-        if (Objects.equals(place, "signText")) return signText;
-        if (Objects.equals(place, "unSignText")) return unSignText;
-        return luckyStar;
-    }
 }
