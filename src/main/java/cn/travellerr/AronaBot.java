@@ -13,10 +13,10 @@ import net.mamoe.mirai.event.GlobalEventChannel;
 public final class AronaBot extends JavaPlugin {
     public static final AronaBot INSTANCE = new AronaBot();
     /*插件版本*/
-    public static final String version = "1.0.0";
+    public static final String version = "1.0.1";
 
     public static config config;
-
+    public static String ffmpeg = null;
     public static long startTime = System.currentTimeMillis();
     private AronaBot() {
         super(new JvmPluginDescriptionBuilder("cn.travellerr.AronaBot", version)
@@ -34,6 +34,13 @@ public final class AronaBot extends JavaPlugin {
         reloadPluginConfig(cn.travellerr.config.config.INSTANCE);
         config = cn.travellerr.config.config.INSTANCE;
         GFont.init();
+
+        ffmpeg = config.getFfmpegPath();
+        if (!config.getUseSilk() && ffmpeg == null) {
+            Log.errorWithoutE("你似乎没有安装SilkConverter插件，并且没有安装ffmpeg。语音合成功能已关闭");
+            config.setUseVoice(false);
+            reloadPluginConfig(cn.travellerr.config.config.INSTANCE);
+        }
         eventEventChannel.registerListenerHost(new MessageEventListener());
         Log.info("插件已加载!");
     }

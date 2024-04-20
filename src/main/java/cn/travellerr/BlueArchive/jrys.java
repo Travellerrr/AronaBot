@@ -5,12 +5,10 @@ import cn.travellerr.tools.Log;
 import net.mamoe.mirai.contact.AvatarSpec;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.User;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.utils.ExternalResource;
-import org.jetbrains.annotations.NotNull;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -20,30 +18,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class jrys {
     private static int index = 1;
-    public static Map<String, String> getMatcher(@NotNull GroupMessageEvent event) {
-        Map<String, String> map = new HashMap<>();
-        String text = event.getMessage().get(0).toString();
-        String regex = "mirai:source:ids=\\[(.*?)], internalIds=\\[(.*?)], from group (.*?) to (.*?) at (.*?)";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(text);
-        if (matcher.find()) {
-            map.put("源ID", matcher.group(1));
-            map.put("内部ID", matcher.group(2));
-            map.put("来源QQ号", matcher.group(3));
-            map.put("目标组ID", matcher.group(4));
-            map.put("时间戳", matcher.group(5));
-        }
-        return map;
-    }
+
 
     public static void info(MessageEvent event) {
         Contact subject = event.getSubject();
@@ -128,7 +108,7 @@ public class jrys {
             String text = GetSentenceApi.fortuneSummary;
             //检测运势长度，自适应字体大小
             int textX = 495;
-            if (text.length() >= 5) {
+            if (text.length() > 6) {
                 font = font.deriveFont(25f);
                 textX = 700;
             }
