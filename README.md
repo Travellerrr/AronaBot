@@ -12,6 +12,7 @@
 | `/xxx说 xxx [中文/日语/英文]` | 调用蔚蓝档案语音生成，自定义语言 | **所有** |
 
 `/监控`指令需要在`config/cn.travellerr.AronaBot/Config.yml`下设置主人
+
 `语音生成`指令需要在`config/cn.travellerr.AronaBot/Config.yml`设置是否启用
 
 ## 版本
