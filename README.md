@@ -15,5 +15,38 @@
 
 `语音生成`指令需要在`config/cn.travellerr.AronaBot/Config.yml`设置是否启用
 
+## 配置
+
+```yaml
+# 插件主人QQ号
+owner: 0
+
+# 主机器人，非必要配置
+bot: 0
+
+# 监控授权QQ号
+user:
+  - 123
+  - 456
+
+# 指令前缀
+prefix: '/'
+
+# 本地字体目录,以mcl为主目录填写相对路径
+useLocalFont: ''
+
+# 是否启用语音合成
+useVoice: true
+
+# 语音合成模型地址
+url: 'travellerr11-ba-voice-models.hf.space'
+
+# 是否使用SilkConverter
+useSilk: false
+
+# ffmpeg地址,以mcl为主目录填写相对路径,若启用语音合成且不使用SilkConverter则必须填写ffmpeg路径
+ffmpegPath: ''
+```
+
 ## 版本
-`Version = 1.0.1`
+`Version = 1.0.3`
