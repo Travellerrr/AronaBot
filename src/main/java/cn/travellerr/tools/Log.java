@@ -25,4 +25,13 @@ public class Log {
     public static void errorWithoutE(String msg) {
         log.error(name + msg);
     }
+
+    public static void error(String msg, Throwable e) {
+        log.error(name + msg);
+        log.error(name + e.getMessage(), e);
+    }
+
+    public static void error(Throwable e) {
+        log.error(name + e.getMessage(), e);
+    }
 }

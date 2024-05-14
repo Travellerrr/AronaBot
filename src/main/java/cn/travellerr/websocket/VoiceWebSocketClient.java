@@ -10,6 +10,7 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.SecureRandom;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -17,6 +18,7 @@ public class VoiceWebSocketClient extends WebSocketClient {
     //static String msg;
     public static String errorMsg = null;
     private final BlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
+    private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyz0123456789";
 
     public VoiceWebSocketClient(URI uri) {
         super(uri);
@@ -32,8 +34,17 @@ public class VoiceWebSocketClient extends WebSocketClient {
             //System.out.println("Connecting...");
         }
         //System.out.println("Connected.");
+
+        SecureRandom random = new SecureRandom();
+        StringBuilder stringBuilder = new StringBuilder(10);
+        for (int i = 0; i < 10; i++) {
+            int randomIndex = random.nextInt(CHARACTERS.length());
+            stringBuilder.append(CHARACTERS.charAt(randomIndex));
+        }
+
+        String hash = stringBuilder.toString();
         // 发送消息
-        String message = "{\"fn_index\":2,\"session_hash\":\"yp6mqefrdna\"}";
+        String message = "{\"fn_index\":2,\"session_hash\":\"" + hash + "\"}";
         client.send(message);
         //System.out.println("Sent message to server: " + message);
         String voiceUrl;
@@ -43,9 +54,9 @@ public class VoiceWebSocketClient extends WebSocketClient {
                 receivedMessage = client.getNextMessage();
                 if (receivedMessage.contains("send_data")) {
                     if (lang == null) {
-                        message = "{\"data\":[\"" + msg + "\",\"" + character + "\",\"简体中文\",0.6,0.668,1,false],\"event_data\":null,\"fn_index\":2,\"session_hash\":\"yp6mqefrdna\"}";
+                        message = "{\"data\":[\"" + msg + "\",\"" + character + "\",\"简体中文\",0.6,0.668,1,false],\"event_data\":null,\"fn_index\":2,\"session_hash\":\"" + hash + "\"}";
                     } else {
-                        message = "{\"data\":[\"" + msg + "\",\"" + character + "\",\"" + lang + "\",0.6,0.668,1,false],\"event_data\":null,\"fn_index\":2,\"session_hash\":\"yp6mqefrdna\"}";
+                        message = "{\"data\":[\"" + msg + "\",\"" + character + "\",\"" + lang + "\",0.6,0.668,1,false],\"event_data\":null,\"fn_index\":2,\"session_hash\":\"" + hash + "\"}";
                     }
 
                     client.send(message);
@@ -68,7 +79,7 @@ public class VoiceWebSocketClient extends WebSocketClient {
         }
         JsonElement data = output.get("data");
         if (!data.isJsonArray()) {
-            errorMsg = "出现错误！请找Travellerr Sensei查看后台哦";
+            errorMsg = "出现错误！请找主人查看后台哦";
         } else {
             // 获取数组中第二个元素对应的JsonObject
             JsonObject secondElementObject = data.getAsJsonArray().get(1).getAsJsonObject();
@@ -103,7 +114,7 @@ public class VoiceWebSocketClient extends WebSocketClient {
 
     @Override
     public void onError(Exception ex) {
-        System.out.println("Error occurred: " + ex.getMessage());
+        Log.errorWithoutE("Error occurred: " + ex.getMessage());
     }
 
     public String getNextMessage() throws InterruptedException {

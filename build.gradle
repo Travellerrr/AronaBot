@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'cn.travellerr'
-version = '1.0.1'
+version = '1.0.4'
 
 repositories {
     //maven { url 'https://maven.aliyun.com/repository/public' }
@@ -19,10 +19,10 @@ dependencies {
     implementation group: 'cn.hutool', name: 'hutool-all', version: '5.8.25'
     implementation 'com.github.oshi:oshi-core:3.5.0'
     implementation 'org.jfree:jfreechart:1.5.3'
-    implementation 'org.xerial:sqlite-jdbc:3.44.1.0'
     implementation 'org.java-websocket:Java-WebSocket:1.5.5'
     implementation 'com.alibaba:fastjson:2.0.9.graal'
 
+    implementation 'org.xerial:sqlite-jdbc:3.44.1.0'
 }
 mirai {
     jvmTarget JavaVersion.VERSION_11

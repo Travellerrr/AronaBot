@@ -32,5 +32,11 @@ object config : AutoSavePluginConfig("Config") {
     @ValueDescription("ffmpeg地址\n")
     var ffmpegPath: String by value()
 
+    @ValueDescription("\n\n启用群聊退出提示\n")
+    var useGroupLeave: Boolean by value(true)
+
+    @ValueDescription("启用龙王转移提示\n")
+    var useGroupDragon: Boolean by value(true)
+
 
 }
