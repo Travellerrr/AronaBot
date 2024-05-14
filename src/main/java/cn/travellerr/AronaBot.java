@@ -1,5 +1,6 @@
 package cn.travellerr;
 
+import cn.travellerr.command.RegCommand;
 import cn.travellerr.config.config;
 import cn.travellerr.event.MessageEventListener;
 import cn.travellerr.tools.GFont;
@@ -37,6 +38,10 @@ public final class AronaBot extends JavaPlugin {
 
         reloadPluginConfig(cn.travellerr.config.config.INSTANCE);
         config = cn.travellerr.config.config.INSTANCE;
+
+        RegCommand regCommand = RegCommand.INSTANCE;
+        regCommand.register();
+
         GFont.init();
 
         ffmpeg = config.getFfmpegPath();

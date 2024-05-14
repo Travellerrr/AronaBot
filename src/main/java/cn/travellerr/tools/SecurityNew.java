@@ -357,6 +357,27 @@ public class SecurityNew {
         }
     }
 
+    public static void Security(Contact subject, User user) {
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        subject.sendMessage(new At(user.getId()).plus("Sensei\n状态获取中，请稍等"));
+        getOsInfo();
+        getMemoryInfo();
+        getDiskUsed();
+        getBytes();
+        info(stream, subject, user.getId());
+        try {
+            ExternalResource resource = ExternalResource.create(new ByteArrayInputStream(stream.toByteArray()));
+            net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(resource);
+            subject.sendMessage(sendImage.plus(new At(user.getId())));
+            resource.close();
+            stream.close();
+
+        } catch (Exception e) {
+            e.fillInStackTrace();
+        }
+    }
+
     /**
      * from HuyanEconomy
      * By chahuyun
