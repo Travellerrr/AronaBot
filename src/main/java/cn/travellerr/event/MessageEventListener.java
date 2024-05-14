@@ -6,10 +6,14 @@ import cn.travellerr.tools.Log;
 import cn.travellerr.tools.SecurityNew;
 import cn.travellerr.tools.api;
 import cn.travellerr.websocket.VoiceGet;
+import kotlin.coroutines.CoroutineContext;
+import net.mamoe.mirai.contact.BotIsBeingMutedException;
 import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.contact.MessageTooLargeException;
 import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
+import net.mamoe.mirai.event.events.EventCancelledException;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,6 +21,22 @@ import java.util.regex.Pattern;
 
 
 public class MessageEventListener extends SimpleListenerHost {
+
+    @Override
+    public void handleException(@NotNull CoroutineContext context, @NotNull Throwable exception) {
+        if (exception instanceof EventCancelledException) {
+            Log.error("发送消息被取消:", exception);
+        } else if (exception instanceof BotIsBeingMutedException) {
+            Log.error("你的机器人被禁言:", exception);
+        } else if (exception instanceof MessageTooLargeException) {
+            Log.error("发送消息过长:", exception);
+        } else if (exception instanceof IllegalArgumentException) {
+            Log.error("发送消息为空:", exception);
+        }
+
+        // 处理事件处理时抛出的异常
+        Log.error(exception);
+    }
     @EventHandler()
     public void onMessage(@NotNull MessageEvent event) {
         config config = cn.travellerr.config.config.INSTANCE;
@@ -85,6 +105,13 @@ public class MessageEventListener extends SimpleListenerHost {
                     return;
                 }
 
+
+                /*String BALogo = "balogo (\\S+) (\\S+)";
+                if (Pattern.matches(BALogo, msg)) {
+                    Log.info("BA标题生成");
+                    VoiceGet.make(event, true, url, useSilk);
+                    return;
+                }*/
             }
         }
     }
