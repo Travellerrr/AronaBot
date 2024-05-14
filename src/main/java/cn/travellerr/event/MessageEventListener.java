@@ -70,19 +70,21 @@ public class MessageEventListener extends SimpleListenerHost {
                 return;
             }*/
             if (config.getUseVoice()) {
-                String make = "(\\S+)说 (\\S+)";
+
+                String makeWithLang = "^(\\S+)说 .* (.*日.*|.*中.*|.*英.*)$";
+                if (Pattern.matches(makeWithLang, msg)) {
+                    Log.info("其他语音生成");
+                    VoiceGet.make(event, true, url, useSilk);
+                    return;
+                }
+
+                String make = "^(\\S+)说 .*$";
                 if (Pattern.matches(make, msg)) {
                     Log.info("中文语音生成");
                     VoiceGet.make(event, false, url, useSilk);
                     return;
                 }
 
-                String makeWithLang = "(\\S+)说 (\\S+) (\\S+)";
-                if (Pattern.matches(makeWithLang, msg)) {
-                    Log.info("其他语音生成");
-                    VoiceGet.make(event, true, url, useSilk);
-                    return;
-                }
             }
         }
     }
