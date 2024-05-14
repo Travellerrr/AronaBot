@@ -51,10 +51,22 @@ public class api {
         }
     }
 
-    public static void chaiq(MessageEvent event) {
+    /*public static void chaiq(MessageEvent event) {
         try {
             Contact subject = event.getSubject();
             User user = event.getSender();
+            URL url = new URL("https://api.lolimi.cn/API/chaiq/c.php");
+            ExternalResource resource = ExternalResource.create(url.openStream());
+            Image image = subject.uploadImage(resource);
+            subject.sendMessage(new At(user.getId()).plus(image));
+            resource.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }*/
+
+    public static void chaiq(Contact subject, User user) {
+        try {
             URL url = new URL("https://api.lolimi.cn/API/chaiq/c.php");
             ExternalResource resource = ExternalResource.create(url.openStream());
             Image image = subject.uploadImage(resource);

@@ -86,4 +86,67 @@ public class VoiceGet {
             throw new RuntimeException(e);
         }
     }
+
+    public static void make(Contact subject, User user, MessageChain message, String url, boolean useSilk) {
+        String code = message.serializeToMiraiCode();
+
+        String[] s = code.split(" ");
+        String character = s[1];
+        StringBuilder msg = new StringBuilder();
+        String language;
+
+        language = s[s.length - 1];
+        if (language.contains("日")) {
+            for (int i = 2; i < s.length - 1; i++) {
+                msg.append(s[i]);
+            }
+            language = "日本語";
+        } else if (language.contains("英")) {
+            language = "English";
+            for (int i = 2; i < s.length - 1; i++) {
+                msg.append(s[i]);
+                msg.append(" ");
+            }
+        } else if (language.contains("中")) {
+            for (int i = 2; i < s.length - 1; i++) {
+                msg.append(s[i]);
+                msg.append(" ");
+            }
+        } else {
+            language = "简体中文";
+            for (int i = 2; i < s.length; i++) {
+                msg.append(s[i]);
+            }
+        }
+
+
+        try {
+            VoiceWebSocketClient.webSocket(character, msg.toString(), language, url);
+            if (errorMsg != null) {
+                subject.sendMessage(new At(user.getId()).plus(errorMsg));
+                return;
+            }
+            File f = new File("temp/" + tempId + ".wav");
+            if (!useSilk) {
+                File f2 = new File("temp/amr" + tempId + ".amr");
+                exeCmd(ffmpeg, "-i", f.getAbsolutePath(), "-ab", "23.85k", "-ar", "16000",
+                        "-ac", "1", "-acodec", "amr_wb", "-fs", "1000000", "-y", f2.getAbsolutePath());
+                ExternalResource resource = ExternalResource.create(f2);
+                Audio audio = ((AudioSupported) subject).uploadAudio(resource);
+                subject.sendMessage(audio);
+                resource.close();
+                f.delete();
+                f2.delete();
+            } else {
+                ExternalResource resource = ExternalResource.create(f);
+                Audio audio = ((AudioSupported) subject).uploadAudio(resource);
+                subject.sendMessage(audio);
+                resource.close();
+                f.delete();
+            }
+            //f2.delete();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
