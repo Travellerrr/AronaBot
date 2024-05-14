@@ -10,6 +10,7 @@ import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.utils.ExternalResource;
 
 import java.io.File;
+import java.util.StringJoiner;
 
 import static cn.travellerr.AronaBot.ffmpeg;
 import static cn.travellerr.websocket.VoiceWebSocketClient.errorMsg;
@@ -40,12 +41,16 @@ public class VoiceGet {
         String[] s = code.split("说 ");
         String character = s[0];
         character = character.substring(1);
-        String msg = s[1];
+        StringBuilder msg = new StringBuilder(s[1]);
         String language = null;
         if (lang) {
-            String[] langMsg = msg.split(" ");
-            msg = langMsg[0];
-            language = langMsg[1];
+            String[] langMsg = msg.toString().split(" ");
+            StringJoiner msgJoiner = new StringJoiner(" ");
+            for (int i = 0; i < langMsg.length - 1; i++) {
+                msgJoiner.add(langMsg[i]);
+            }
+            msg = new StringBuilder(msgJoiner.toString());
+            language = langMsg[langMsg.length - 1];
             if (language.contains("日")) language = "日本語";
             else if (language.contains("中")) language = "简体中文";
             else if (language.contains("英")) language = "English";
@@ -53,7 +58,7 @@ public class VoiceGet {
         }
 
         try {
-            VoiceWebSocketClient.webSocket(character, msg, language, url);
+            VoiceWebSocketClient.webSocket(character, msg.toString(), language, url);
             if (errorMsg != null) {
                 subject.sendMessage(new At(user.getId()).plus(errorMsg));
                 return;
