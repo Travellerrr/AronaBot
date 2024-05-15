@@ -14,6 +14,7 @@ import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 
 
+@Deprecated(since = "加入MCL指令系统")
 public class MessageEventListener extends SimpleListenerHost {
 
     @Override
@@ -35,8 +36,6 @@ public class MessageEventListener extends SimpleListenerHost {
     public void onMessage(@NotNull MessageEvent event) {
         config config = cn.travellerr.config.config.INSTANCE;
         User sender = event.getSender();
-        boolean owner = config.getOwner() == sender.getId();
-        String prefix = config.getPrefix();
         Contact subject = event.getSubject();
         String msg = event.getMessage().serializeToMiraiCode();
         String url = config.getUrl();
