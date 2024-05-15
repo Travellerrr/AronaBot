@@ -4,7 +4,6 @@ package cn.travellerr.tools;
 import cn.hutool.system.oshi.CpuInfo;
 import cn.hutool.system.oshi.OshiUtil;
 import cn.travellerr.AronaBot;
-import cn.travellerr.config.config;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.AvatarSpec;
 import net.mamoe.mirai.contact.Contact;
@@ -80,9 +79,7 @@ public class SecurityNew {
 
     public static void info(ByteArrayOutputStream stream, Contact subject, long QQ) {
         Font = Font.deriveFont(40f);
-        config config = cn.travellerr.config.config.INSTANCE;
 
-        long botQQ = config.getBot();
         // 加载背景图
         try {
 
@@ -111,44 +108,10 @@ public class SecurityNew {
             g2d.drawString("Java版本: " + javaVersion, 250, 280);
             long runTime = System.currentTimeMillis();
             g2d.drawString("已运行" + convertTime(runTime - AronaBot.startTime), 250, 320);
-            /*
-             * 待优化
-             * TODO 封装函数
-             */
+
             DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
             dataset.setValue("Used Cpu", cpu);
             dataset.setValue("Total Cpu", 100 - cpu);
-            // 创建饼图数据集
-
-//
-//            JFreeChart chart = ChartFactory.createPieChart(
-//                    "",
-//                    dataset,
-//                    false,
-//                    false,
-//                    false
-//            );
-//
-//            chart.setBorderVisible(false);
-//            chart.setBackgroundPaint(null);
-//            chart.setBackgroundImageAlpha(0.0f);
-//
-//            PiePlot plot = (PiePlot) chart.getPlot();
-//            plot.setCircular(true);
-//            plot.setBackgroundAlpha(0.0f);
-//            plot.setOutlinePaint(null);
-//            plot.setLabelGenerator(null);
-//            plot.setShadowGenerator(null);
-//            plot.setShadowPaint(null);
-//
-//
-//            // 创建一个 ChartPanel 并绘制饼图
-//            ChartPanel chartPanel = new ChartPanel(chart);
-//            chartPanel.setSize(200, 130);
-//            Color transparentColor = new Color(0, 0, 0, 0); // 完全透明
-//            chartPanel.setBackground(transparentColor);
-//            g2d.translate(100, 475);
-//            chartPanel.paint(g2d);
 
             drawPieChart(g2d, "", dataset, 100, 475);
 
@@ -176,30 +139,7 @@ public class SecurityNew {
             dataset.setValue("Used Memory", UsedMem);
             dataset.setValue("Total Memory", TotalMem - UsedMem);
             drawPieChart(g2d, "", dataset, 230, 0);
-//            chart = ChartFactory.createPieChart(
-//                    "",
-//                    dataset,
-//                    false,
-//                    false,
-//                    false
-//            );
-//
-//            chart.setBorderVisible(false);
-//            chart.setBackgroundPaint(null);
-//            chart.setBackgroundImageAlpha(0.0f);
-//            plot = (PiePlot) chart.getPlot();
-//            plot.setCircular(true);
-//            plot.setBackgroundAlpha(0.0f);
-//            plot.setOutlinePaint(null);
-//            plot.setLabelGenerator(null);
-//            plot.setShadowGenerator(null);
-//            plot.setShadowPaint(null);
-//
-//            chartPanel = new ChartPanel(chart);
-//            chartPanel.setSize(200, 130);
-//            chartPanel.setBackground(transparentColor);
-//            g2d.translate(230, 0);
-//            chartPanel.paint(g2d);
+
             g2d.setColor(Color.WHITE);
             g2d.fillOval(69, 34, 60, 60);
 
@@ -221,30 +161,7 @@ public class SecurityNew {
             dataset.setValue("Used Disk", UsedDisk);
             dataset.setValue("Total Disk", FreeSpaceDisk);
             drawPieChart(g2d, "", dataset, 230, 0);
-//            chart = ChartFactory.createPieChart(
-//                    "",
-//                    dataset,
-//                    false,
-//                    false,
-//                    false
-//            );
-//
-//            chart.setBorderVisible(false);
-//            chart.setBackgroundPaint(null);
-//            chart.setBackgroundImageAlpha(0.0f);
-//            plot = (PiePlot) chart.getPlot();
-//            plot.setCircular(true);
-//            plot.setBackgroundAlpha(0.0f);
-//            plot.setOutlinePaint(null);
-//            plot.setLabelGenerator(null);
-//            plot.setShadowGenerator(null);
-//            plot.setShadowPaint(null);
-//
-//            chartPanel = new ChartPanel(chart);
-//            chartPanel.setSize(200, 130);
-//            chartPanel.setBackground(transparentColor);
-//            g2d.translate(230, 0);
-//            chartPanel.paint(g2d);
+
             g2d.setColor(Color.WHITE);
             g2d.fillOval(69, 34, 60, 60);
             // 保存合成后的图像到文件
@@ -334,6 +251,7 @@ public class SecurityNew {
 
     }
 
+    @Deprecated(since = "加入MCL指令系统")
     public static void Security(MessageEvent event) {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -379,8 +297,8 @@ public class SecurityNew {
     }
 
     /**
-     * from HuyanEconomy
-     * By chahuyun
+     * @author chahuyun
+     * @see  <a href="https://github.com/Moyuyanli/HuYanEconomy/tree/master">HuyanEconomy</a>
      */
     private static BufferedImage makeRoundedCorner(BufferedImage image) {
         int w = image.getWidth();
@@ -398,14 +316,6 @@ public class SecurityNew {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.fillRoundRect(0, 0, w, h, 50, 50);
         g2.setComposite(AlphaComposite.SrcIn);
-        /*结束*/
-
-
-        /*这里绘画原型图
-        原图切成圆形
-         */
-//        Ellipse2D.Double shape = new Ellipse2D.Double(0, 0, w, h);
-//        g2.setClip(shape);
         /*结束*/
 
         g2.drawImage(image, 0, 0, w, h, null);

@@ -46,21 +46,14 @@ public class VoiceWebSocketClient extends WebSocketClient {
         // 发送消息
         String message = "{\"fn_index\":2,\"session_hash\":\"" + hash + "\"}";
         client.send(message);
-        //System.out.println("Sent message to server: " + message);
         String voiceUrl;
         try {
             String receivedMessage;
             do {
                 receivedMessage = client.getNextMessage();
                 if (receivedMessage.contains("send_data")) {
-                    if (lang == null) {
-                        message = "{\"data\":[\"" + msg + "\",\"" + character + "\",\"简体中文\",0.6,0.668,1,false],\"event_data\":null,\"fn_index\":2,\"session_hash\":\"" + hash + "\"}";
-                    } else {
-                        message = "{\"data\":[\"" + msg + "\",\"" + character + "\",\"" + lang + "\",0.6,0.668,1,false],\"event_data\":null,\"fn_index\":2,\"session_hash\":\"" + hash + "\"}";
-                    }
-
+                    message = "{\"data\":[\"" + msg + "\",\"" + character + "\",\"" + lang + "\",0.6,0.668,1,false],\"event_data\":null,\"fn_index\":2,\"session_hash\":\"" + hash + "\"}";
                     client.send(message);
-                    //System.out.println("Sent message to server: " + message);
                 }
             } while (!receivedMessage.contains("process_completed"));
             voiceUrl = receivedMessage;
@@ -68,7 +61,6 @@ public class VoiceWebSocketClient extends WebSocketClient {
             throw new RuntimeException(e);
         }
         client.close(); // 关闭 WebSocket 连接
-        //System.out.println("Connection closed.");
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(voiceUrl, JsonObject.class);
         JsonObject output = jsonObject.getAsJsonObject("output");

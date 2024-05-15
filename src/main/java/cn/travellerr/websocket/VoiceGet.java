@@ -1,5 +1,6 @@
 package cn.travellerr.websocket;
 
+import cn.travellerr.tools.Log;
 import net.mamoe.mirai.contact.AudioSupported;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.User;
@@ -32,6 +33,7 @@ public class VoiceGet {
         }
     }
 
+    @Deprecated(since = "加入MCL指令系统")
     public static void make(MessageEvent event, boolean lang, String url, boolean useSilk) {
         MessageChain message = event.getMessage();
         User user = event.getSender();
@@ -97,10 +99,10 @@ public class VoiceGet {
 
         language = s[s.length - 1];
         if (language.contains("日")) {
+            language = "日本語";
             for (int i = 2; i < s.length - 1; i++) {
                 msg.append(s[i]);
             }
-            language = "日本語";
         } else if (language.contains("英")) {
             language = "English";
             for (int i = 2; i < s.length - 1; i++) {
@@ -108,6 +110,7 @@ public class VoiceGet {
                 msg.append(" ");
             }
         } else if (language.contains("中")) {
+            language = "简体中文";
             for (int i = 2; i < s.length - 1; i++) {
                 msg.append(s[i]);
                 msg.append(" ");
@@ -118,7 +121,9 @@ public class VoiceGet {
                 msg.append(s[i]);
             }
         }
-
+        msg = new StringBuilder(msg.toString().replace("\\", ""));
+        Log.info("Language: " + language);
+        Log.info("Msg: " + msg);
 
         try {
             VoiceWebSocketClient.webSocket(character, msg.toString(), language, url);

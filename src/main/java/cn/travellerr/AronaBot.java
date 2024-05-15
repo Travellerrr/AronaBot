@@ -2,13 +2,10 @@ package cn.travellerr;
 
 import cn.travellerr.command.RegCommand;
 import cn.travellerr.config.config;
-import cn.travellerr.event.MessageEventListener;
 import cn.travellerr.tools.GFont;
 import cn.travellerr.tools.Log;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
-import net.mamoe.mirai.event.Event;
-import net.mamoe.mirai.event.EventChannel;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.GroupTalkativeChangeEvent;
 import net.mamoe.mirai.event.events.MemberLeaveEvent;
@@ -34,7 +31,7 @@ public final class AronaBot extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        EventChannel<Event> eventEventChannel = GlobalEventChannel.INSTANCE.parentScope(AronaBot.INSTANCE);
+        //EventChannel<Event> eventEventChannel = GlobalEventChannel.INSTANCE.parentScope(AronaBot.INSTANCE);
 
         reloadPluginConfig(cn.travellerr.config.config.INSTANCE);
         config = cn.travellerr.config.config.INSTANCE;
@@ -50,7 +47,7 @@ public final class AronaBot extends JavaPlugin {
             config.setUseVoice(false);
             reloadPluginConfig(cn.travellerr.config.config.INSTANCE);
         }
-        eventEventChannel.registerListenerHost(new MessageEventListener());
+        //eventEventChannel.registerListenerHost(new MessageEventListener());
 
 
         /*
