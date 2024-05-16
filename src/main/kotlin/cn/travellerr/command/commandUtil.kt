@@ -16,7 +16,7 @@ import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.User
 import net.mamoe.mirai.message.data.MessageChain
 
-object GetJrys : SimpleCommand(AronaBot.INSTANCE, "今日运势", "jrys", description = "获取今日运势信息") {
+object GetJrys : SimpleCommand(AronaBot.INSTANCE, "jrys", "今日运势", description = "获取今日运势信息") {
     @Handler
     fun useJrys(sender: CommandSender) {
         Log.info("运势指令")
@@ -26,7 +26,7 @@ object GetJrys : SimpleCommand(AronaBot.INSTANCE, "今日运势", "jrys", descri
     }
 }
 
-object GetSecurity : SimpleCommand(AronaBot.INSTANCE, "监控", description = "查看机器人状态") {
+object GetSecurity : SimpleCommand(AronaBot.INSTANCE, "securityImage", "监控", description = "查看机器人状态") {
     @Handler
     fun useSecurity(sender: CommandSender) {
         Log.info("监控指令")
@@ -47,7 +47,7 @@ object ReloadConfig : SimpleCommand(AronaBot.INSTANCE, "AronaBot", description =
     }
 }
 
-object RandomChaiq : SimpleCommand(AronaBot.INSTANCE, "随机柴郡", description = "获取随机柴郡表情包") {
+object RandomChaiq : SimpleCommand(AronaBot.INSTANCE, "random-chaiq", "随机柴郡", description = "获取随机柴郡表情包") {
     @Handler
     fun getChaiq(sender: CommandSender) {
         val subject: Contact? = sender.subject
@@ -57,10 +57,10 @@ object RandomChaiq : SimpleCommand(AronaBot.INSTANCE, "随机柴郡", descriptio
     }
 }
 
-object getVoice : SimpleCommand(AronaBot.INSTANCE, "语音生成") {
+object GetVoice : SimpleCommand(AronaBot.INSTANCE, "voice-gen", "语音生成") {
     // ...
     @Handler
-    fun foo(sender: CommandContext, vararg args: String) {
+    fun useVoice(sender: CommandContext, vararg args: String) {
 
         Log.info("语音生成")
 
