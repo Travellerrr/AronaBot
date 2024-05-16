@@ -8,6 +8,6 @@ object RegCommand {
         CommandManager.registerCommand(GetSecurity)
         CommandManager.registerCommand(ReloadConfig)
         CommandManager.registerCommand(RandomChaiq)
-        CommandManager.registerCommand(getVoice)
+        CommandManager.registerCommand(GetVoice)
     }
 }

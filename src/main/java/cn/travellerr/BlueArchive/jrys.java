@@ -174,11 +174,13 @@ public class jrys {
             sendMsg.append("\n").append(GetSentenceApi.fortuneSummary).append("\n").append(GetSentenceApi.luckyStar).append("\n").append(GetSentenceApi.signText).append("\n").append(GetSentenceApi.unSignText).append("\n\n抱歉Sensei，由于图片无法发送，这是阿洛娜手写出来的签！");
             Log.error("签到管理:签到图片发送错误!", e);
             subject.sendMessage(sendMsg.build());
+            stream.close();
             return;
         }
         ExternalResource resource = ExternalResource.create(new ByteArrayInputStream(stream.toByteArray()));
         net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(resource);
         subject.sendMessage(sendImage.plus(new At(fromQQ)));
+        stream.close();
         resource.close();
     }
 
@@ -200,7 +202,7 @@ public class jrys {
 
 
     public static void info(Contact subject, User sender) {
-        subject.sendMessage(new At(sender.getId()).plus("\nSensei请稍等！阿洛娜这就为您抽签！"));
+        subject.sendMessage(new At(sender.getId()).plus("\nSensei请稍等！" + subject.getBot().getNick() + "这就为您抽签！"));
 
         try {
             int schoolNum = 3;  //学校数量
@@ -219,11 +221,7 @@ public class jrys {
             } else if (school == 0) {
                 picNum = 5;
             }
-            /*
-            Log.info("School: " + school);
-            Log.info("club: " + club);
-            Log.info("picNum: " + picNum);
-            */
+
             // 读取背景图片和覆盖图片
             ClassLoader classLoader = jrys.class.getClassLoader();
             BufferedImage background = ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream("jrys/" + school + "/" + club + "/bg.png")));
@@ -287,7 +285,6 @@ public class jrys {
             int stringWidth = g.getFontMetrics().stringWidth(text);
             g.setFont(font);
             int x = (textX - stringWidth) / 2;
-            System.out.println(x);
             g.drawString(text, x, 165);
 
             //获取运势建议
@@ -320,7 +317,7 @@ public class jrys {
             font = font.deriveFont(20f);
             g.setFont(font);
             g.setColor(Color.white);
-            g.drawString("BOT阿洛娜&Travellerr", 550, 795);
+            g.drawString("AronaBot&Travellerr", 550, 795);
 
 
             BufferedImage stamp = ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream(stamp(GetSentenceApi.luckyStar))));
