@@ -2,8 +2,8 @@ package cn.travellerr.command
 
 import cn.travellerr.AronaBot
 import cn.travellerr.BlueArchive.jrys
-import cn.travellerr.config.config.url
-import cn.travellerr.config.config.useSilk
+import cn.travellerr.config.Config.url
+import cn.travellerr.config.Config.useSilk
 import cn.travellerr.tools.Log
 import cn.travellerr.tools.SecurityNew
 import cn.travellerr.tools.api
@@ -58,7 +58,6 @@ object RandomChaiq : SimpleCommand(AronaBot.INSTANCE, "random-chaiq", "随机柴
 }
 
 object GetVoice : SimpleCommand(AronaBot.INSTANCE, "voice-gen", "语音生成") {
-    // ...
     @Handler
     fun useVoice(sender: CommandContext, vararg args: String) {
 

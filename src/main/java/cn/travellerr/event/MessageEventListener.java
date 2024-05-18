@@ -1,6 +1,6 @@
 package cn.travellerr.event;
 
-import cn.travellerr.config.config;
+import cn.travellerr.config.Config;
 import cn.travellerr.tools.Log;
 import kotlin.coroutines.CoroutineContext;
 import net.mamoe.mirai.contact.BotIsBeingMutedException;
@@ -34,7 +34,7 @@ public class MessageEventListener extends SimpleListenerHost {
     }
     @EventHandler()
     public void onMessage(@NotNull MessageEvent event) {
-        config config = cn.travellerr.config.config.INSTANCE;
+        Config config = cn.travellerr.config.Config.INSTANCE;
         User sender = event.getSender();
         Contact subject = event.getSubject();
         String msg = event.getMessage().serializeToMiraiCode();

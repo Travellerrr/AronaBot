@@ -1,12 +1,15 @@
 package cn.travellerr;
 
 import cn.travellerr.command.RegCommand;
-import cn.travellerr.config.config;
+import cn.travellerr.config.Config;
+import cn.travellerr.event.Menu;
 import cn.travellerr.tools.GFont;
 import cn.travellerr.tools.Log;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
+import net.mamoe.mirai.event.events.BotJoinGroupEvent;
+import net.mamoe.mirai.event.events.FriendAddEvent;
 import net.mamoe.mirai.event.events.GroupTalkativeChangeEvent;
 import net.mamoe.mirai.event.events.MemberLeaveEvent;
 import net.mamoe.mirai.message.data.At;
@@ -17,7 +20,7 @@ public final class AronaBot extends JavaPlugin {
     /*插件版本*/
     public static final String version = "1.0.4";
 
-    public static config config;
+    public static Config config;
     public static String ffmpeg = null;
     public static long startTime = System.currentTimeMillis();
     private AronaBot() {
@@ -33,8 +36,8 @@ public final class AronaBot extends JavaPlugin {
     public void onEnable() {
         //EventChannel<Event> eventEventChannel = GlobalEventChannel.INSTANCE.parentScope(AronaBot.INSTANCE);
 
-        reloadPluginConfig(cn.travellerr.config.config.INSTANCE);
-        config = cn.travellerr.config.config.INSTANCE;
+        reloadPluginConfig(cn.travellerr.config.Config.INSTANCE);
+        config = cn.travellerr.config.Config.INSTANCE;
 
         RegCommand regCommand = RegCommand.INSTANCE;
         regCommand.register();
@@ -45,7 +48,7 @@ public final class AronaBot extends JavaPlugin {
         if (!config.getUseSilk() && ffmpeg == null) {
             Log.errorWithoutE("你似乎没有安装SilkConverter插件，并且没有安装ffmpeg。语音合成功能已关闭");
             config.setUseVoice(false);
-            reloadPluginConfig(cn.travellerr.config.config.INSTANCE);
+            reloadPluginConfig(cn.travellerr.config.Config.INSTANCE);
         }
         //eventEventChannel.registerListenerHost(new MessageEventListener());
 
@@ -95,6 +98,10 @@ public final class AronaBot extends JavaPlugin {
             }
         });
 
+
+        // 私用模块，请修改后使用
+        GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, Menu::sendMenuToFriend);
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, Menu::sendMenuToGroup);
 
 
 
