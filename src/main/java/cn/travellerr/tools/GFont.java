@@ -1,6 +1,6 @@
 package cn.travellerr.tools;
 
-import cn.travellerr.config.config;
+import cn.travellerr.config.Config;
 
 import java.awt.*;
 import java.io.File;
@@ -11,7 +11,7 @@ public class GFont {
     public static Font font;
 
     public static void init() {
-        config config = cn.travellerr.config.config.INSTANCE;
+        Config config = cn.travellerr.config.Config.INSTANCE;
         if (config.getUseLocalFont().isEmpty()) {
             try {
                 InputStream fontStream = GFont.class.getResourceAsStream("/fonts/黑体.ttf");
