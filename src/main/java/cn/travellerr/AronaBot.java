@@ -18,7 +18,7 @@ import net.mamoe.mirai.message.data.PlainText;
 public final class AronaBot extends JavaPlugin {
     public static final AronaBot INSTANCE = new AronaBot();
     /*插件版本*/
-    public static final String version = "1.0.4";
+    public static final String version = "1.0.5";
 
     public static Config config;
     public static String ffmpeg = null;
