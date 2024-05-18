@@ -4,7 +4,7 @@ import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 
-object config : AutoSavePluginConfig("Config") {
+object Config : AutoSavePluginConfig("Config") {
     @ValueDescription("本地字体目录\n")
     var useLocalFont: String by value()
 
