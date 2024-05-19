@@ -56,3 +56,6 @@ useGroupDragon: true
 ## 版本
 
 `Version = 1.0.5`
+
+## 推广
+[我做的可自定义的好感度插件](https://github.com/Travellerrr/Favorability/)
