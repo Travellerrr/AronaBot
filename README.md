@@ -51,6 +51,7 @@ useGroupDragon: true
 ## 声明
 
 **群聊成员退出提示** 与 **启用龙王转移提示** 摘取于`LaoLittle tsudzuki`的项目[AutoGroup](https://github.com/LaoLittle/AutoGroup)
+
 如果有问题请联系我进行删除
 
 ## 版本

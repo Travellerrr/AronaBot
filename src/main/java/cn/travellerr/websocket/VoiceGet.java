@@ -11,8 +11,10 @@ import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.utils.ExternalResource;
 
 import java.io.File;
+import java.util.List;
 import java.util.StringJoiner;
 
+import static cn.travellerr.AronaBot.blackList;
 import static cn.travellerr.AronaBot.ffmpeg;
 import static cn.travellerr.websocket.VoiceWebSocketClient.errorMsg;
 import static cn.travellerr.websocket.downloadVoice.tempId;
@@ -124,6 +126,13 @@ public class VoiceGet {
         msg = new StringBuilder(msg.toString().replace("\\", ""));
         Log.info("Language: " + language);
         Log.info("Msg: " + msg);
+        List<String> list = blackList.getBlackList();
+        for (String blackStr : list) {
+            if (msg.toString().contains(blackStr)) {
+                subject.sendMessage(new At(user.getId()) + "\n请检查发言，内含违禁词！");
+                return;
+            }
+        }
 
         try {
             VoiceWebSocketClient.webSocket(character, msg.toString(), language, url);
