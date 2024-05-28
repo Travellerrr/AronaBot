@@ -2,6 +2,7 @@ package cn.travellerr;
 
 import cn.travellerr.command.RegCommand;
 import cn.travellerr.config.Config;
+import cn.travellerr.config.VoiceBlackList;
 import cn.travellerr.event.Menu;
 import cn.travellerr.tools.GFont;
 import cn.travellerr.tools.Log;
@@ -21,6 +22,7 @@ public final class AronaBot extends JavaPlugin {
     public static final String version = "1.0.5";
 
     public static Config config;
+    public static VoiceBlackList blackList;
     public static String ffmpeg = null;
     public static long startTime = System.currentTimeMillis();
     private AronaBot() {
@@ -37,7 +39,9 @@ public final class AronaBot extends JavaPlugin {
         //EventChannel<Event> eventEventChannel = GlobalEventChannel.INSTANCE.parentScope(AronaBot.INSTANCE);
 
         reloadPluginConfig(cn.travellerr.config.Config.INSTANCE);
+        reloadPluginConfig(VoiceBlackList.INSTANCE);
         config = cn.travellerr.config.Config.INSTANCE;
+        blackList = VoiceBlackList.INSTANCE;
 
         RegCommand regCommand = RegCommand.INSTANCE;
         regCommand.register();

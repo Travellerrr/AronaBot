@@ -16,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class VoiceWebSocketClient extends WebSocketClient {
     //static String msg;
-    public static String errorMsg = null;
+    protected static String errorMsg = null;
     private final BlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -25,6 +25,7 @@ public class VoiceWebSocketClient extends WebSocketClient {
     }
 
     public static void webSocket(String character, String msg, String lang, String url) throws InterruptedException, URISyntaxException {
+        errorMsg = null;
         String serverURI = "wss://" + url + "/queue/join"; // 连接的服务器 URI
         VoiceWebSocketClient client = new VoiceWebSocketClient(new URI(serverURI));
         client.connect(); // 连接 WebSocket 服务器
@@ -63,13 +64,14 @@ public class VoiceWebSocketClient extends WebSocketClient {
         client.close(); // 关闭 WebSocket 连接
         Gson gson = new Gson();
         JsonObject jsonObject = gson.fromJson(voiceUrl, JsonObject.class);
+        Log.debug(String.valueOf(jsonObject));
         JsonObject output = jsonObject.getAsJsonObject("output");
-        if (output.get("data") == null) {
+        Log.debug(String.valueOf(output));
+        JsonElement data = output.get("data");
+        if (data == null) {
             errorMsg = "出现错误！data值为null，可能没有此角色，请使用角色名生成（如 \"白洲梓\" 请说 \"梓\")";
-            Log.errorWithoutE("data值为null，可能为无此角色");
             return;
         }
-        JsonElement data = output.get("data");
         if (!data.isJsonArray()) {
             errorMsg = "出现错误！请找主人查看后台哦";
         } else {

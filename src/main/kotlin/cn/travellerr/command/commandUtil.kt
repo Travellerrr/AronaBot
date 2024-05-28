@@ -42,6 +42,7 @@ object ReloadConfig : SimpleCommand(AronaBot.INSTANCE, "AronaBot", description =
     suspend fun reload(sender: CommandSender, msg: String) {
         if (msg == "reload") {
             AronaBot.INSTANCE.reloadPluginConfig(AronaBot.config)
+            AronaBot.INSTANCE.reloadPluginConfig(AronaBot.blackList)
             sender.sendMessage("重载已完成")
         }
     }
