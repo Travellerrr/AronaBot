@@ -1,7 +1,6 @@
 package cn.travellerr.tools;
 
 
-import cn.hutool.system.oshi.CpuInfo;
 import cn.hutool.system.oshi.OshiUtil;
 import cn.travellerr.AronaBot;
 import net.mamoe.mirai.Bot;
@@ -18,8 +17,10 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 import oshi.SystemInfo;
+import oshi.hardware.CentralProcessor;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.NetworkIF;
+import oshi.util.Util;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -213,15 +214,23 @@ public class SecurityNew {
     }
 
     public static void getOsInfo() {
-        CpuInfo cpuInfo = OshiUtil.getCpuInfo();
-        double free = cpuInfo.getFree();
-        DecimalFormat format = new DecimalFormat("#.00");
-        cpu = Double.parseDouble(format.format(100.0D - free));
+        CentralProcessor processor = new SystemInfo().getHardware().getProcessor();
+        // Wait a second...
+        Util.sleep(100);
+        double[] loads = processor.getProcessorCpuLoadBetweenTicks();
+        double totalLoad = 0;
+        for (double load : loads) {
+            totalLoad += load;
+        }
+        cpu = (totalLoad / loads.length) * 100;
+        Log.debug("CPU使用率: " + cpu);
     }
 
     public static void getMemoryInfo() {
         TotalMem = OshiUtil.getMemory().getTotal() / 1024 / 1024 / 1024;
         UsedMem = OshiUtil.getMemory().getAvailable() / 1024 / 1024 / 1024;
+        Log.debug("服务器总内存: " + TotalMem);
+        Log.debug("服务器使用内存: " + UsedMem);
     }
 
     public static void getDiskUsed() {
@@ -233,6 +242,9 @@ public class SecurityNew {
             FreeSpaceDisk = freeSpace / 1024 / 1024 / 1024;
             UsedDisk = (total - freeSpace) / 1024 / 1024 / 1024;
         }
+        Log.debug("服务器总硬盘空间: " + TotalDisk);
+        Log.debug("服务器剩余硬盘空间: " + FreeSpaceDisk);
+        Log.debug("服务器使用硬盘空间: " + UsedDisk);
     }
 
     public static void getBytes() {
@@ -248,6 +260,9 @@ public class SecurityNew {
         }
         getRecv = df.format((double) getBytesRecv / (1024 * 1024)) + "MB";
         getSent = df.format((double) getBytesSent / (1024 * 1024)) + "MB";
+
+        Log.debug("服务器上行量: " + getSent);
+        Log.debug("服务器下行量: " + getRecv);
 
     }
 
