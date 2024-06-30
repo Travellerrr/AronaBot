@@ -60,3 +60,7 @@ useGroupDragon: true
 
 ## 推广
 [我做的可自定义的好感度插件](https://github.com/Travellerrr/Favorability/)
+
+---
+
+[![Stargazers over time](https://starchart.cc/Travellerrr/AronaBot.svg?variant=adaptive)](https://starchart.cc/Travellerrr/AronaBot)
