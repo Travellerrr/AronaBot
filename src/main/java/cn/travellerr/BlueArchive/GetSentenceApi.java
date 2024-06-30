@@ -25,6 +25,8 @@ public class GetSentenceApi {
     static String unSignText;
     static String luckyStar;
 
+    static int FortuneID = 402;
+
     @Deprecated(since = "已废弃")
     public static String get(){
         try {
@@ -138,7 +140,7 @@ public class GetSentenceApi {
 
     private static int generateFortuneID() {
         Random random = new Random();
-        return random.nextInt(1434) + 1;
+        return random.nextInt(FortuneID) + 1;
     }
 
     private static boolean isDateDifferent(Connection conn, long qqNumber) throws SQLException {

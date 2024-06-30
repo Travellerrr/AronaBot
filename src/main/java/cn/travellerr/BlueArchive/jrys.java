@@ -279,6 +279,11 @@ public class jrys {
             //检测运势长度，自适应字体大小
             int textX = 495;
             if (text.length() > 6) {
+
+                font = font.deriveFont(30f);
+                textX = 610;
+            }
+            if (text.length() > 8) {
                 font = font.deriveFont(25f);
                 textX = 700;
             }
@@ -322,6 +327,11 @@ public class jrys {
 
             BufferedImage stamp = ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream(stamp(GetSentenceApi.luckyStar))));
             g.drawImage(stamp, 315, 618, null);
+
+            /*font = font.deriveFont(30f);
+            g.setFont(font);
+            g.setColor(new Color(194, 9, 9));
+            g.drawString("祝各位考生能考出属于自己的理想成绩！",40 ,750);*/
 
             g.dispose();
             sendImage(sender, combined, subject, sender.getId());

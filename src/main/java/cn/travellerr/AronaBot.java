@@ -9,9 +9,9 @@ import cn.travellerr.tools.Log;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
-import net.mamoe.mirai.event.events.BotJoinGroupEvent;
 import net.mamoe.mirai.event.events.FriendAddEvent;
 import net.mamoe.mirai.event.events.GroupTalkativeChangeEvent;
+import net.mamoe.mirai.event.events.MemberJoinEvent;
 import net.mamoe.mirai.event.events.MemberLeaveEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.PlainText;
@@ -105,7 +105,11 @@ public final class AronaBot extends JavaPlugin {
 
         // 私用模块，请修改后使用
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, Menu::sendMenuToFriend);
-        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, Menu::sendMenuToGroup);
+        GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, memberJoinEvent -> {
+            if (memberJoinEvent.getMember().getId() == memberJoinEvent.getBot().getId()) {
+                Menu.sendMenuToGroup(memberJoinEvent);
+            }
+        });
 
 
 
