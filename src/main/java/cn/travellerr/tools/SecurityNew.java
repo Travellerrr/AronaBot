@@ -206,7 +206,7 @@ public class SecurityNew {
 
         } catch (IOException e) {
             MessageChainBuilder messages = new MessageChainBuilder();
-            messages.append(new At(QQ)).append("唔……什亭之匣好像出了些问题呢……图片无法发送，阿洛娜就用文字代替吧！\nCPU使用率: ").append(String.valueOf(cpu)).append("%\n总内存: ").append(String.valueOf(TotalMem)).append("GB\n使用内存: ").append(String.valueOf(UsedMem)).append("GB\n总磁盘: ").append(String.valueOf(TotalDisk)).append("GB\n剩余空间: ").append(String.valueOf(FreeSpaceDisk)).append("GB\n使用空间: ").append(String.valueOf(UsedDisk)).append("GB");
+            messages.append(new At(QQ)).append("唔……好像出了些问题呢……图片无法发送，").append(subject.getBot().getNick()).append("就用文字代替吧！\nCPU使用率: ").append(String.valueOf(cpu)).append("%\n总内存: ").append(String.valueOf(TotalMem)).append("GB\n使用内存: ").append(String.valueOf(UsedMem)).append("GB\n总磁盘: ").append(String.valueOf(TotalDisk)).append("GB\n剩余空间: ").append(String.valueOf(FreeSpaceDisk)).append("GB\n使用空间: ").append(String.valueOf(UsedDisk)).append("GB");
             subject.sendMessage(messages.build());
             e.fillInStackTrace();
         }
@@ -222,7 +222,8 @@ public class SecurityNew {
         for (double load : loads) {
             totalLoad += load;
         }
-        cpu = (totalLoad / loads.length) * 100;
+        DecimalFormat df = new DecimalFormat("#.##");
+        cpu = Double.parseDouble(df.format((totalLoad / loads.length) * 100));
         Log.debug("CPU使用率: " + cpu);
     }
 
