@@ -7,25 +7,34 @@
 |            指令             |        功能        |  作用域   |
 |:-------------------------:|:----------------:|:------:|
 |          `/今日运势`          |      查看今日运势      | **所有** |
+|          `/今日人品`          |     查看今日人品值      | **所有** |
 |           `/监控`           |    查看服务器资源占用     | **所有** |
 |          `/随机柴郡`          |    获取随机柴郡表情包     | **所有** |
+|     `/生成后缀 [名称] [后缀]`     | 使用unicode码生成名字后缀 | **所有** |
 |     `/语音生成 [角色] [文本]`     |    调用蔚蓝档案语音生成    | **所有** |
 | `/语音生成 [角色] [文本] <中/日/英>` | 调用蔚蓝档案语音生成，自定义语言 | **所有** |
+|    `/aronabot reload`     |      重载配置文件      | **所有** |
 
 ## 权限节点
 
-指令系统权限节点如下 (所有节点使用LuckPerm权限查看器获取，可能有偏差）
+指令系统权限节点如下
 
 | **指令** |                    **权限节点**                    |
 |:------:|:----------------------------------------------:|
-| `今日运势` |     `cn.travellerr.aronabot.command.jrys`      |
-| `随机柴郡` | `cn.travellerr.aronabot.command.random-chaiq`  |
-|  `监控`  | `cn.travellerr.aronabot.command.securityimage` |
-| `语音生成` |   `cn.travellerr.aronabot.command.voice-gen`   |
+| `今日运势` |     `cn.travellerr.aronabot:command.jrys`      |
+| `今日人品` |     `cn.travellerr.aronabot:command.jrrp`      |
+|  `监控`  | `cn.travellerr.aronabot:command.securityimage` |
+| `随机柴郡` | `cn.travellerr.aronabot:command.random-chaiq`  |
+| `生成后缀` | `cn.travellerr.aronabot:command.generatename`  |
+| `语音生成` |   `cn.travellerr.aronabot:command.voice-gen`   |
+| `重载配置` |   `cn.travellerr.aronabot:command.aronabot`    |
 
 ## 配置
 
 ```yaml
+# 是否启用文字输出运势
+isText: false
+
 # 本地字体目录,以mcl为主目录填写相对路径
 useLocalFont: ''
 
@@ -43,10 +52,34 @@ ffmpegPath: ''
 
 ```
 
+---
+
+## 关于 `/今日人品` 指令
+
+该指令与 `/今日运势` 指令 使用同一数据库，所以获取到的人品值应该是和运势挂钩的
+
+如果当天已经使用过了 `/今日运势` 指令，那么 `/今日人品` 不会重新生成，而是直接获取之前的运势id，向101取余计算人品值
+例如:
+
+| ID | QQ        | FortuneID | Date                |
+|----|-----------|-----------|---------------------|
+| 1  | 123456789 | 348       | 2024-05-14 21:51:30 |
+| 2  | 114514123 | 200       | 2024-03-23 18:13:27 |
+| 3  | 191981011 | 126       | 2024-07-02 19:36:03 |
+
+分别将计算为
+
+| QQ        | jrrpValue |
+|-----------|-----------|
+| 123456789 | 48        |
+| 114514123 | 100       |
+| 191981011 | 26        |
+
+---
 
 ## 版本
 
-`Version = 1.0.5`
+`Version = 1.1.1`
 
 ## 推广
 [我做的可自定义的好感度插件](https://github.com/Travellerrr/Favorability/)
