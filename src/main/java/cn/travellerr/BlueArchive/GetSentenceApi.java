@@ -25,7 +25,7 @@ public class GetSentenceApi {
     static String unSignText;
     static String luckyStar;
 
-    static int FortuneID = 402;
+    static int AllFortuneID = 402;
 
     @Deprecated(since = "已废弃")
     public static String get(){
@@ -77,7 +77,7 @@ public class GetSentenceApi {
     }
 
 
-    public static void getJrys(long qqNumber) {
+    public static void generateFortuneID(long qqNumber, boolean isForJrys) {
         String directory = "./data/cn.travellerr.AronaBot/";
         String dbName = "jrys.db"; // 数据库文件名
         String dbPath = Paths.get(directory, dbName).toString();
@@ -85,12 +85,12 @@ public class GetSentenceApi {
 
         try {
             Class.forName("org.sqlite.JDBC");
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             throw new RuntimeException("出错了~", e);
         }
+        createDirectory(directory);
 
         // 创建目录，如果已存在则不会创建
-        createDirectory(directory);
 
         try (Connection conn = DriverManager.getConnection(url)) {
             createTable(conn);
@@ -102,11 +102,49 @@ public class GetSentenceApi {
                 int fortuneID = generateFortuneID();
                 updateData(conn, qqNumber, fortuneID);
             }
-            getData(conn, qqNumber);
+            if (isForJrys) getData(conn, qqNumber);
         } catch (SQLException e) {
             throw new RuntimeException("出错了~", e);
         }
     }
+
+    public static boolean isDateDifferent(long qqNumber) {
+        String directory = "./data/cn.travellerr.AronaBot/";
+        String dbName = "jrys.db"; // 数据库文件名
+        String dbPath = Paths.get(directory, dbName).toString();
+        String url = "jdbc:sqlite:" + dbPath;
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (Exception e) {
+            throw new RuntimeException("出错了~", e);
+        }
+
+        createDirectory(directory);
+        // 创建目录，如果已存在则不会创建
+
+        try (Connection conn = DriverManager.getConnection(url)) {
+            String selectSql = "SELECT MAX(Date) FROM fortune WHERE QQ = ?";
+            try (PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
+                selectStmt.setLong(1, qqNumber);
+                try (ResultSet rs = selectStmt.executeQuery()) {
+                    if (rs.next()) {
+                        Timestamp latestDate = rs.getTimestamp(1);
+                        if (latestDate != null) {
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            String latestDateString = dateFormat.format(latestDate);
+                            String currentDateString = dateFormat.format(new Date());
+                            return !latestDateString.equals(currentDateString);
+                        }
+                    }
+                }
+            }
+            return true; // 默认返回true，表示日期不相等
+        } catch (SQLException e) {
+            throw new RuntimeException("出错了~", e);
+        }
+    }
+
 
     private static void updateData(Connection conn, long qqNumber, int fortuneID) throws SQLException {
         String updateSql = "UPDATE fortune SET fortuneID = ?, Date = ? WHERE QQ = ?";
@@ -140,7 +178,7 @@ public class GetSentenceApi {
 
     private static int generateFortuneID() {
         Random random = new Random();
-        return random.nextInt(FortuneID) + 1;
+        return random.nextInt(AllFortuneID) + 1;
     }
 
     private static boolean isDateDifferent(Connection conn, long qqNumber) throws SQLException {
@@ -226,6 +264,38 @@ public class GetSentenceApi {
             // 处理SQL异常
             throw new RuntimeException("出错了~", e);
         }
+    }
+
+    public static int getFortuneID(long qqNumber) {
+        String directory = "./data/cn.travellerr.AronaBot/";
+        String dbName = "jrys.db"; // 数据库文件名
+        String dbPath = Paths.get(directory, dbName).toString();
+        String url = "jdbc:sqlite:" + dbPath;
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (Exception e) {
+            throw new RuntimeException("出错了~", e);
+        }
+
+        createDirectory(directory);
+        // 创建目录，如果已存在则不会创建
+
+        try (Connection conn = DriverManager.getConnection(url)) {
+            String selectSql = "SELECT fortuneID FROM fortune WHERE QQ = ?";
+            try (PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
+                selectStmt.setLong(1, qqNumber);
+                try (ResultSet rs = selectStmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("fortuneID");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("出错了~", e);
+        }
+
+        return -1;
     }
 
     private static String getStringFromJson(JsonObject jsonObject, String key) {

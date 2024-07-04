@@ -1,6 +1,7 @@
 package cn.travellerr.command
 
 import cn.travellerr.AronaBot
+import cn.travellerr.BlueArchive.jrrp
 import cn.travellerr.BlueArchive.jrys
 import cn.travellerr.config.Config.url
 import cn.travellerr.config.Config.useSilk
@@ -104,6 +105,16 @@ object GenerateUnicodeName : SimpleCommand(AronaBot.INSTANCE, "generateName", "�
         if (subject is Contact) {
             subject.sendMessage("请使用 \"$prefix [名称] [后缀]\"生成")
         }
+    }
+}
+
+object GetJrrp : SimpleCommand(AronaBot.INSTANCE, "jrrp", "今日人品") {
+    @Handler
+    fun getJrrp(context: CommandContext) {
+        val subject: Contact? = context.sender.subject
+        val user: User? = context.sender.user
+
+        jrrp.info(subject, user)
     }
 }
 

@@ -10,5 +10,6 @@ object RegCommand {
         CommandManager.registerCommand(RandomChaiq)
         CommandManager.registerCommand(GetVoice)
         CommandManager.registerCommand(GenerateUnicodeName)
+        CommandManager.registerCommand(GetJrrp)
     }
 }

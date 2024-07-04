@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'cn.travellerr'
-version = '1.0.6'
+version = '1.0.7'
 
 repositories {
     //maven { url 'https://maven.aliyun.com/repository/public' }
