@@ -5,6 +5,9 @@ import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 
 object Config : AutoSavePluginConfig("Config") {
+    @ValueDescription("是否启用文字输出运势\n")
+    var isText: Boolean by value(false)
+
     @ValueDescription("本地字体目录\n")
     var useLocalFont: String by value()
 
