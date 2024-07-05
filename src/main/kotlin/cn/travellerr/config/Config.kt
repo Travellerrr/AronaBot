@@ -8,6 +8,9 @@ object Config : AutoSavePluginConfig("Config") {
     @ValueDescription("是否启用文字输出运势\n")
     var isText: Boolean by value(false)
 
+    @ValueDescription("用户后缀\n")
+    var suffix: String by value("Sensei")
+
     @ValueDescription("本地字体目录\n")
     var useLocalFont: String by value()
 

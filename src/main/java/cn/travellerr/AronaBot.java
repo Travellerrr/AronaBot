@@ -68,6 +68,8 @@ public final class AronaBot extends JavaPlugin {
 
 
         Log.info("插件已加载!");
+
+
     }
 
     @Override

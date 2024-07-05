@@ -9,6 +9,7 @@ import cn.travellerr.tools.Log
 import cn.travellerr.tools.SecurityNew
 import cn.travellerr.tools.api
 import cn.travellerr.websocket.VoiceGet
+import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.console.command.CommandContext
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.SimpleCommand
@@ -70,6 +71,7 @@ object GetVoice : SimpleCommand(AronaBot.INSTANCE, "voice-gen", "语音生成") 
         val user: User? = sender.sender.user
         val message: MessageChain = sender.originalMessage
         VoiceGet.make(subject, user, message, url, useSilk)
+        MiraiConsole
     }
 
     @Handler

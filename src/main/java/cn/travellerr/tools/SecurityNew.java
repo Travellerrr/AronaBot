@@ -1,13 +1,11 @@
 package cn.travellerr.tools;
 
 
-import cn.hutool.system.oshi.OshiUtil;
 import cn.travellerr.AronaBot;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.AvatarSpec;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.User;
-import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.utils.ExternalResource;
@@ -18,6 +16,7 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
+import oshi.hardware.GlobalMemory;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.hardware.NetworkIF;
 import oshi.util.Util;
@@ -36,11 +35,13 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
+import static cn.travellerr.AronaBot.config;
+
 public class SecurityNew {
 
     static double cpu;
     static long TotalMem;
-    static long UsedMem;
+    static long UnusedMem;
     static long TotalDisk;
     static long FreeSpaceDisk;
     static long UsedDisk;
@@ -137,8 +138,8 @@ public class SecurityNew {
              * 重复使用，希望有一天能包装成函数
              */
             dataset = new DefaultPieDataset<>();
-            dataset.setValue("Used Memory", UsedMem);
-            dataset.setValue("Total Memory", TotalMem - UsedMem);
+            dataset.setValue("Used Memory", UnusedMem);
+            dataset.setValue("Total Memory", TotalMem - UnusedMem);
             drawPieChart(g2d, "", dataset, 230, 0);
 
             g2d.setColor(Color.WHITE);
@@ -150,7 +151,7 @@ public class SecurityNew {
             g2d.setFont(SFont);
             g2d.drawString("使用率", 70, 190);
             DecimalFormat df = new DecimalFormat("#.##");
-            String MemInfo = df.format((double) UsedMem / TotalMem * 100) + "%";
+            String MemInfo = df.format((double) (TotalMem - UnusedMem) / TotalMem * 100) + "%";
             textWidth = fontMetrics.stringWidth(MemInfo);
             textHeight = fontMetrics.getHeight();
             x = (200 - textWidth) / 2;
@@ -206,14 +207,14 @@ public class SecurityNew {
 
         } catch (IOException e) {
             MessageChainBuilder messages = new MessageChainBuilder();
-            messages.append(new At(QQ)).append("唔……好像出了些问题呢……图片无法发送，").append(subject.getBot().getNick()).append("就用文字代替吧！\nCPU使用率: ").append(String.valueOf(cpu)).append("%\n总内存: ").append(String.valueOf(TotalMem)).append("GB\n使用内存: ").append(String.valueOf(UsedMem)).append("GB\n总磁盘: ").append(String.valueOf(TotalDisk)).append("GB\n剩余空间: ").append(String.valueOf(FreeSpaceDisk)).append("GB\n使用空间: ").append(String.valueOf(UsedDisk)).append("GB");
+            messages.append(new At(QQ)).append("唔……好像出了些问题呢……图片无法发送，").append(subject.getBot().getNick()).append("就用文字代替吧！\nCPU使用率: ").append(String.valueOf(cpu)).append("%\n总内存: ").append(String.valueOf(TotalMem)).append("GB\n使用内存: ").append(String.valueOf(UnusedMem)).append("GB\n总磁盘: ").append(String.valueOf(TotalDisk)).append("GB\n剩余空间: ").append(String.valueOf(FreeSpaceDisk)).append("GB\n使用空间: ").append(String.valueOf(UsedDisk)).append("GB");
             subject.sendMessage(messages.build());
             e.fillInStackTrace();
         }
 
     }
 
-    public static void getOsInfo() {
+    public static void getCpuUsage() {
         CentralProcessor processor = new SystemInfo().getHardware().getProcessor();
         // Wait a second...
         Util.sleep(100);
@@ -228,10 +229,12 @@ public class SecurityNew {
     }
 
     public static void getMemoryInfo() {
-        TotalMem = OshiUtil.getMemory().getTotal() / 1024 / 1024 / 1024;
-        UsedMem = OshiUtil.getMemory().getAvailable() / 1024 / 1024 / 1024;
+        SystemInfo systemInfo = new SystemInfo();
+        GlobalMemory memory = systemInfo.getHardware().getMemory();
+        TotalMem = memory.getTotal() / 1024 / 1024 / 1024;
+        UnusedMem = memory.getAvailable() / 1024 / 1024 / 1024;
         Log.debug("服务器总内存: " + TotalMem);
-        Log.debug("服务器使用内存: " + UsedMem);
+        Log.debug("服务器空闲内存: " + UnusedMem);
     }
 
     public static void getDiskUsed() {
@@ -267,35 +270,13 @@ public class SecurityNew {
 
     }
 
-    @Deprecated(since = "加入MCL指令系统")
-    public static void Security(MessageEvent event) {
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        Contact subject = event.getSubject();
-        User user = event.getSender();
-        subject.sendMessage(new At(user.getId()).plus("Sensei\n状态获取中，请稍等"));
-        getOsInfo();
-        getMemoryInfo();
-        getDiskUsed();
-        getBytes();
-        info(stream, subject, user.getId());
-        try {
-            ExternalResource resource = ExternalResource.create(new ByteArrayInputStream(stream.toByteArray()));
-            net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(resource);
-            subject.sendMessage(sendImage.plus(new At(user.getId())));
-            resource.close();
-            stream.close();
-
-        } catch (Exception e) {
-            e.fillInStackTrace();
-        }
-    }
 
     public static void Security(Contact subject, User user) {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        subject.sendMessage(new At(user.getId()).plus("Sensei\n状态获取中，请稍等"));
-        getOsInfo();
+        subject.sendMessage(new At(user.getId()).plus(config.getSuffix() + "\n状态获取中，请稍等"));
+        getCpuUsage();
         getMemoryInfo();
         getDiskUsed();
         getBytes();
