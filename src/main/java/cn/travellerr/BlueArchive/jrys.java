@@ -35,7 +35,7 @@ public class jrys {
             sendMsg.append(new At(fromQQ));
             sendMsg.append("\n");
             sendMsg.append(avatar);
-            sendMsg.append("\n").append(GetSentenceApi.fortuneSummary).append("\n").append(GetSentenceApi.luckyStar).append("\n").append(GetSentenceApi.signText).append("\n").append(GetSentenceApi.unSignText).append("\n\n抱歉Sensei，由于图片无法发送，这是阿洛娜手写出来的签！");
+            sendMsg.append("\n").append(GetSentenceApi.fortuneSummary).append("\n").append(GetSentenceApi.luckyStar).append("\n").append(GetSentenceApi.signText).append("\n").append(GetSentenceApi.unSignText).append("\n\n抱歉").append(config.getSuffix()).append("，由于图片无法发送，这是阿洛娜手写出来的签！");
             Log.error("签到管理:签到图片发送错误!", e);
             subject.sendMessage(sendMsg.build());
             stream.close();
@@ -66,7 +66,7 @@ public class jrys {
 
 
     public static void info(Contact subject, User sender) {
-        subject.sendMessage(new At(sender.getId()).plus("\nSensei请稍等！" + subject.getBot().getNick() + "这就为您抽签！"));
+        subject.sendMessage(new At(sender.getId()).plus("\n" + config.getSuffix() + "请稍等！" + subject.getBot().getNick() + "这就为您抽签！"));
         GetSentenceApi.generateFortuneID(sender.getId(), true);
 
         if (!config.isText()) {
