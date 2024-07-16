@@ -8,12 +8,16 @@ import net.mamoe.mirai.message.data.MessageChainBuilder;
 public class jrrp {
     public static void info(Contact subject, User user) {
         long qqNumber = user.getId();
-        boolean isDifferentDate = GetSentenceApi.isDateDifferent(qqNumber);
+        boolean isUserNew = GetSentenceApi.isQQNumberNew(qqNumber);
+        boolean isDifferentDate = false;
+        if (!isUserNew) {
+            isDifferentDate = GetSentenceApi.isDateDifferent(qqNumber);
+        }
 
         MessageChainBuilder message = new MessageChainBuilder();
         message.append(new At(qqNumber)).append("\n");
         int jrrp;
-        if (!isDifferentDate) {
+        if (!isDifferentDate && !isUserNew) {
             message.append("今日已查询,");
         } else {
             GetSentenceApi.generateFortuneID(qqNumber, false);

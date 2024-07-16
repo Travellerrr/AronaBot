@@ -120,6 +120,7 @@ public class GetSentenceApi {
             throw new RuntimeException("出错了~", e);
         }
 
+
         createDirectory(directory);
         // 创建目录，如果已存在则不会创建
 
@@ -140,6 +141,35 @@ public class GetSentenceApi {
                 }
             }
             return true; // 默认返回true，表示日期不相等
+        } catch (SQLException e) {
+            throw new RuntimeException("出错了~", e);
+        }
+    }
+
+    public static boolean isQQNumberNew(long qqNumber) {
+        String directory = "./data/cn.travellerr.AronaBot/";
+        String dbName = "jrys.db"; // 数据库文件名
+        String dbPath = Paths.get(directory, dbName).toString();
+        String url = "jdbc:sqlite:" + dbPath;
+
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (Exception e) {
+            throw new RuntimeException("出错了~", e);
+        }
+
+
+        createDirectory(directory);
+        // 创建目录，如果已存在则不会创建
+
+        try (Connection conn = DriverManager.getConnection(url)) {
+            String selectSql = "SELECT COUNT(*) FROM fortune WHERE QQ = ?";
+            try (PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
+                selectStmt.setLong(1, qqNumber);
+                try (ResultSet rs = selectStmt.executeQuery()) {
+                    return rs.next() && rs.getInt(1) == 0;
+                }
+            }
         } catch (SQLException e) {
             throw new RuntimeException("出错了~", e);
         }
