@@ -26,5 +26,8 @@ object Config : AutoSavePluginConfig("Config") {
     @ValueDescription("ffmpeg地址\n")
     var ffmpegPath: String by value()
 
+    @ValueDescription("Debug模式")
+    var debug: Boolean by value(false)
+
 
 }

@@ -15,7 +15,7 @@ import net.mamoe.mirai.event.events.MemberJoinEvent;
 public final class AronaBot extends JavaPlugin {
     public static final AronaBot INSTANCE = new AronaBot();
     /*插件版本*/
-    public static final String version = "1.1.1";
+    public static final String version = "1.1.2";
 
     public static Config config;
     public static VoiceBlackList blackList;
@@ -46,7 +46,7 @@ public final class AronaBot extends JavaPlugin {
 
         ffmpeg = config.getFfmpegPath();
         if (!config.getUseSilk() && ffmpeg == null) {
-            Log.errorWithoutE("你似乎没有安装SilkConverter插件，并且没有安装ffmpeg。语音合成功能已关闭");
+            Log.error("你似乎没有安装SilkConverter插件，并且没有安装ffmpeg。语音合成功能已关闭");
             config.setUseVoice(false);
             reloadPluginConfig(cn.travellerr.config.Config.INSTANCE);
         }
