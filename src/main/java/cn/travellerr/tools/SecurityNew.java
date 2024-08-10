@@ -80,6 +80,9 @@ public class SecurityNew {
 
 
     public static void info(ByteArrayOutputStream stream, Contact subject, long QQ) {
+        String javaVersion = System.getProperty("java.version");
+        long runTime = System.currentTimeMillis();
+        Bot bot = subject.getBot();
         Font = Font.deriveFont(40f);
 
         // 加载背景图
@@ -92,7 +95,6 @@ public class SecurityNew {
             // 在合成图像上绘制背景图
             Graphics2D g2d = combinedImage.createGraphics();
             g2d.drawImage(backgroundImage, 0, 0, null);
-            Bot bot = subject.getBot();
             BufferedImage avatar = ImageIO.read(new URL(bot.getAvatarUrl(AvatarSpec.LARGE)));
             //圆角处理
             BufferedImage avatarRounder = makeRoundedCorner(avatar);
@@ -102,13 +104,11 @@ public class SecurityNew {
             g2d.setFont(Font);
             g2d.setColor(Color.BLACK);
             g2d.drawString(bot.getNick(), 250, 195);
-            String javaVersion = System.getProperty("java.version");
 
             Font = Font.deriveFont(25f);
             g2d.setFont(Font);
             g2d.drawString("QQ号: " + bot.getId(), 250, 240);
             g2d.drawString("Java版本: " + javaVersion, 250, 280);
-            long runTime = System.currentTimeMillis();
             g2d.drawString("已运行" + convertTime(runTime - AronaBot.startTime), 250, 320);
 
             DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
@@ -134,9 +134,6 @@ public class SecurityNew {
             g2d.drawString(CpuInfo, x, y);
 
 
-            /*
-             * 重复使用，希望有一天能包装成函数
-             */
             dataset = new DefaultPieDataset<>();
             dataset.setValue("Used Memory", UnusedMem);
             dataset.setValue("Total Memory", TotalMem - UnusedMem);
