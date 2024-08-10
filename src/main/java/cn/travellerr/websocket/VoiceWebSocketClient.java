@@ -108,7 +108,7 @@ public class VoiceWebSocketClient extends WebSocketClient {
 
     @Override
     public void onError(Exception ex) {
-        Log.errorWithoutE("Error occurred: " + ex.getMessage());
+        Log.error("Error occurred: " + ex.getMessage());
     }
 
     public String getNextMessage() throws InterruptedException {

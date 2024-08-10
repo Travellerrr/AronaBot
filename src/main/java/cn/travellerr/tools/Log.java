@@ -22,7 +22,7 @@ public class Log {
         log.error(name + msg);
     }
 
-    public static void errorWithoutE(Object msg) {
+    public static void error(Object msg) {
         log.error(name + msg);
     }
 
