@@ -1,14 +1,13 @@
 package cn.travellerr.BlueArchive;
 
 import cn.travellerr.tools.Log;
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,56 +25,6 @@ public class GetSentenceApi {
     static String luckyStar;
 
     static int AllFortuneID = 402;
-
-    @Deprecated(since = "已废弃")
-    public static String get(){
-        try {
-            URL url = new URL("https://api.gumengya.com/Api/WaSentence");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-            reader.close();
-            Gson gson = new Gson();
-            JsonObject jsonResponse = gson.fromJson(response.toString(), JsonObject.class);
-            JsonObject data = jsonResponse.getAsJsonObject("data");
-            return data.get("text").getAsString();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    // 第三方服务器API不稳定，停止使用
-    @Deprecated(since = "已弃用")
-    public static void getApi(long qqNumber) {
-        try {
-            long EncryptedQQ = qqNumber + 1029384758;
-            URL url = new URL("https://api.fanlisky.cn/api/qr-fortune/get/" + EncryptedQQ);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-            StringBuilder response = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-            reader.close();
-            Gson gson = new Gson();
-            JsonObject jsonObject = gson.fromJson(response.toString(), JsonObject.class);
-            JsonObject data = jsonObject.getAsJsonObject("data");
-            fortuneSummary = data.get("fortuneSummary").getAsString();
-            signText = data.get("signText").getAsString();
-            unSignText = data.get("unSignText").getAsString();
-            luckyStar = data.get("luckyStar").getAsString();
-        } catch (IOException e) {
-            e.fillInStackTrace();
-        }
-    }
-
 
     public static void generateFortuneID(long qqNumber, boolean isForJrys) {
         String directory = "./data/cn.travellerr.AronaBot/";
@@ -125,6 +74,7 @@ public class GetSentenceApi {
         // 创建目录，如果已存在则不会创建
 
         try (Connection conn = DriverManager.getConnection(url)) {
+            createTable(conn);
             String selectSql = "SELECT MAX(Date) FROM fortune WHERE QQ = ?";
             try (PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
                 selectStmt.setLong(1, qqNumber);
@@ -158,11 +108,11 @@ public class GetSentenceApi {
             throw new RuntimeException("出错了~", e);
         }
 
-
         createDirectory(directory);
         // 创建目录，如果已存在则不会创建
 
         try (Connection conn = DriverManager.getConnection(url)) {
+            createTable(conn);
             String selectSql = "SELECT COUNT(*) FROM fortune WHERE QQ = ?";
             try (PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
                 selectStmt.setLong(1, qqNumber);
@@ -312,6 +262,9 @@ public class GetSentenceApi {
         // 创建目录，如果已存在则不会创建
 
         try (Connection conn = DriverManager.getConnection(url)) {
+
+            createTable(conn);
+
             String selectSql = "SELECT fortuneID FROM fortune WHERE QQ = ?";
             try (PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
                 selectStmt.setLong(1, qqNumber);
