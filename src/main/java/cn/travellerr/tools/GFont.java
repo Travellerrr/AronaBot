@@ -30,7 +30,7 @@ public class GFont {
                 if (fontFile.isFile()) {
                     font = Font.createFont(Font.TRUETYPE_FONT, fontFile);
                 } else {
-                    Log.errorWithoutE("出现错误：" + config.getUseLocalFont() + "不是一个文件！");
+                    Log.error("出现错误：" + config.getUseLocalFont() + "不是一个文件！");
                     return;
                 }
             } catch (FontFormatException | IOException e) {

@@ -22,7 +22,7 @@ public class downloadVoice {
             if (!file.exists()) {
                 boolean created = file.mkdirs();
                 if (!created) {
-                    Log.errorWithoutE("创建temp文件夹失败");
+                    Log.error("创建temp文件夹失败");
                 } else {
                     Log.info("创建temp文件夹成功");
                 }
