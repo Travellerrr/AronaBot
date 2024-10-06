@@ -1,7 +1,10 @@
 package cn.travellerr.tools;
 
 
+import cn.hutool.core.date.BetweenFormatter;
+import cn.hutool.core.date.DateUtil;
 import cn.travellerr.AronaBot;
+import cn.travellerr.entity.SysInfo;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.AvatarSpec;
 import net.mamoe.mirai.contact.Contact;
@@ -14,19 +17,12 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
-import oshi.SystemInfo;
-import oshi.hardware.CentralProcessor;
-import oshi.hardware.GlobalMemory;
-import oshi.hardware.HardwareAbstractionLayer;
-import oshi.hardware.NetworkIF;
-import oshi.util.Util;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -39,16 +35,7 @@ import static cn.travellerr.AronaBot.config;
 
 public class SecurityNew {
 
-    static double cpu;
-    static long TotalMem;
-    static long UnusedMem;
-    static long TotalDisk;
-    static long FreeSpaceDisk;
-    static long UsedDisk;
-    static String getSent;
-    static String getRecv;
-
-    static Font Font = GFont.font;
+    private static java.awt.Font Font = GFont.font;
 
     public static void drawPieChart(Graphics2D g2d, String title, DefaultPieDataset<String> dataset, int x, int y) {
         JFreeChart chart = ChartFactory.createPieChart(
@@ -79,7 +66,7 @@ public class SecurityNew {
     }
 
 
-    public static void info(ByteArrayOutputStream stream, Contact subject, long QQ) {
+    public static void info(ByteArrayOutputStream stream, Contact subject, long QQ, SysInfo sysInfo) {
         String javaVersion = System.getProperty("java.version");
         long runTime = System.currentTimeMillis();
         Bot bot = subject.getBot();
@@ -95,10 +82,14 @@ public class SecurityNew {
             // 在合成图像上绘制背景图
             Graphics2D g2d = combinedImage.createGraphics();
             g2d.drawImage(backgroundImage, 0, 0, null);
+
+
+            /*
+             * 第一框图
+             */
             BufferedImage avatar = ImageIO.read(new URL(bot.getAvatarUrl(AvatarSpec.LARGE)));
             //圆角处理
             BufferedImage avatarRounder = makeRoundedCorner(avatar);
-
 
             g2d.drawImage(avatarRounder, 75, 180, null);
             g2d.setFont(Font);
@@ -107,25 +98,27 @@ public class SecurityNew {
 
             Font = Font.deriveFont(25f);
             g2d.setFont(Font);
-            g2d.drawString("QQ号: " + bot.getId(), 250, 240);
-            g2d.drawString("Java版本: " + javaVersion, 250, 280);
-            g2d.drawString("已运行" + convertTime(runTime - AronaBot.startTime), 250, 320);
+            g2d.drawString(String.valueOf(bot.getId()), 330, 240);
+            g2d.drawString(javaVersion, 375, 280);
+            g2d.drawString(convertTime(runTime - AronaBot.startTime), 330, 320);
 
+
+
+            /*
+             * 第二框图
+             */
             DefaultPieDataset<String> dataset = new DefaultPieDataset<>();
-            dataset.setValue("Used Cpu", cpu);
-            dataset.setValue("Total Cpu", 100 - cpu);
+            dataset.setValue("Used Cpu", sysInfo.getUsedCpu());
+            dataset.setValue("Free Cpu", 100 - sysInfo.getUsedCpu());
 
             drawPieChart(g2d, "", dataset, 100, 475);
 
             g2d.setColor(Color.WHITE);
             g2d.fillOval(69, 34, 60, 60);
-            g2d.setFont(Font);
             g2d.setColor(Color.BLACK);
-            g2d.drawString("CPU", 70, 160);
             Font SFont = Font.deriveFont(20f);
             g2d.setFont(SFont);
-            g2d.drawString("使用率", 70, 190);
-            String CpuInfo = cpu + "%";
+            String CpuInfo = sysInfo.getUsedCpu() + "%";
             FontMetrics fontMetrics = g2d.getFontMetrics(SFont);
             int textWidth = fontMetrics.stringWidth(CpuInfo);
             int textHeight = fontMetrics.getHeight();
@@ -135,137 +128,103 @@ public class SecurityNew {
 
 
             dataset = new DefaultPieDataset<>();
-            dataset.setValue("Used Memory", UnusedMem);
-            dataset.setValue("Total Memory", TotalMem - UnusedMem);
+            dataset.setValue("Used Memory", sysInfo.getTotalMem() - sysInfo.getFreeMem());
+            dataset.setValue("Free Memory", sysInfo.getFreeMem());
             drawPieChart(g2d, "", dataset, 230, 0);
 
             g2d.setColor(Color.WHITE);
             g2d.fillOval(69, 34, 60, 60);
 
-            g2d.setFont(Font);
             g2d.setColor(Color.BLACK);
-            g2d.drawString("RAM", 70, 160);
             g2d.setFont(SFont);
-            g2d.drawString("使用率", 70, 190);
             DecimalFormat df = new DecimalFormat("#.##");
-            String MemInfo = df.format((double) (TotalMem - UnusedMem) / TotalMem * 100) + "%";
+            String MemInfo = df.format((double) (sysInfo.getTotalMem() - sysInfo.getFreeMem()) / sysInfo.getTotalMem() * 100) + "%";
             textWidth = fontMetrics.stringWidth(MemInfo);
             textHeight = fontMetrics.getHeight();
             x = (200 - textWidth) / 2;
             y = (420 - textHeight) / 2 + fontMetrics.getAscent();
             g2d.drawString(MemInfo, x, y);
 
-
+            double usedDisk = sysInfo.getTotalDisk() - sysInfo.getFreeSpaceDisk();
             dataset = new DefaultPieDataset<>();
-            dataset.setValue("Used Disk", UsedDisk);
-            dataset.setValue("Total Disk", FreeSpaceDisk);
+            dataset.setValue("Used Disk", usedDisk);
+            dataset.setValue("Free Disk", sysInfo.getFreeSpaceDisk());
             drawPieChart(g2d, "", dataset, 230, 0);
 
             g2d.setColor(Color.WHITE);
             g2d.fillOval(69, 34, 60, 60);
             // 保存合成后的图像到文件
-            g2d.setFont(Font);
             g2d.setColor(Color.BLACK);
-            g2d.drawString("磁盘", 70, 160);
             g2d.setFont(SFont);
-            g2d.drawString("使用率", 70, 190);
-            String DiskInfo = df.format((double) UsedDisk / TotalDisk * 100) + "%";
+            String DiskInfo = df.format((double) usedDisk / sysInfo.getTotalDisk() * 100) + "%";
             textWidth = fontMetrics.stringWidth(DiskInfo);
             textHeight = fontMetrics.getHeight();
             x = (200 - textWidth) / 2;
             y = (420 - textHeight) / 2 + fontMetrics.getAscent();
             g2d.drawString(DiskInfo, x, y);
 
-            g2d.translate(-560, -475);
-            Font = Font.deriveFont(35f);
-            Font = Font.deriveFont(java.awt.Font.BOLD);
-            g2d.setFont(Font);
-            String system = System.getProperty("os.name");
-            g2d.drawString(system, 80, 855);
 
-            Font = Font.deriveFont(30f);
+            g2d.translate(-560, -475);
+
+
+            /*
+             * 第三框图
+             */
+
+            //TODO 群聊与好友累计发送消息统计，网络流量，群聊个数，好友个数……
+
+
             Font = Font.deriveFont(java.awt.Font.PLAIN);
-            g2d.setFont(Font);
-            g2d.drawString("网络流量", 80, 905);
+
             Font = Font.deriveFont(20f);
             g2d.setFont(Font);
             g2d.setColor(new Color(0, 160, 0));
-            g2d.drawString("发送: " + getSent, 90, 935);
+            g2d.drawString("发送: " + sysInfo.getSent(), 520, 945);
+            g2d.drawString(sysInfo.getSendGroupMsgNum() + "条", 250, 910);
+            g2d.drawString(sysInfo.getSendFriendMsgNum() + "条", 250, 980);
             g2d.setColor(new Color(180, 0, 0));
-            g2d.drawString("接收: " + getRecv, 90, 965);
-            g2d.setColor(Color.BLACK);
-            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy年M月d日 EEEE HH:mm:ss", Locale.CHINA);
+            g2d.drawString("接收: " + sysInfo.getReceive(), 520, 1000);
 
+
+            /*
+             * 第四框图
+             */
+            g2d.setColor(Color.BLACK);
+            Font = Font.deriveFont(27f);
+            g2d.setFont(Font);
+
+            g2d.drawString(sysInfo.getPlugins() + "个", 200, 1255);
+
+            Font = Font.deriveFont(35f).deriveFont(java.awt.Font.BOLD);
+            g2d.setFont(Font);
+            String system = System.getProperty("os.name");
+            g2d.drawString(system, 80, 1205);
+
+
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy年M月d日 EEEE HH:mm:ss", Locale.CHINA);
 
             Font = Font.deriveFont(30f);
             g2d.setFont(Font);
-            g2d.drawString(outputFormat.format(new Date()), 80, 1015);
+            g2d.drawString(outputFormat.format(new Date()), 80, 1375);
             ImageIO.write(combinedImage, "png", stream);
 
         } catch (IOException e) {
             MessageChainBuilder messages = new MessageChainBuilder();
-            messages.append(new At(QQ)).append("唔……好像出了些问题呢……图片无法发送，").append(subject.getBot().getNick()).append("就用文字代替吧！\nCPU使用率: ").append(String.valueOf(cpu)).append("%\n总内存: ").append(String.valueOf(TotalMem)).append("GB\n使用内存: ").append(String.valueOf(UnusedMem)).append("GB\n总磁盘: ").append(String.valueOf(TotalDisk)).append("GB\n剩余空间: ").append(String.valueOf(FreeSpaceDisk)).append("GB\n使用空间: ").append(String.valueOf(UsedDisk)).append("GB");
+            messages.append(new At(QQ)).append("唔……好像出了些问题呢……图片无法发送，")
+                    .append(subject.getBot().getNick()).append("就用文字代替吧！\nCPU使用率: ")
+                    .append(String.valueOf(sysInfo.getUsedCpu()))
+                    .append("%\n总内存: ").append(String.valueOf(sysInfo.getTotalMem())).append("GB\n使用内存: ")
+                    .append(String.valueOf(sysInfo.getTotalMem() - sysInfo.getFreeMem()))
+                    .append("GB\n总磁盘: ").append(String.valueOf(sysInfo.getTotalDisk()))
+                    .append("GB\n剩余空间: ").append(String.valueOf(sysInfo.getFreeSpaceDisk()))
+                    .append("GB\n使用空间: ").append(String.valueOf(sysInfo.getTotalDisk() - sysInfo.getFreeSpaceDisk())).append("GB");
             subject.sendMessage(messages.build());
             e.fillInStackTrace();
         }
 
     }
 
-    public static void getCpuUsage() {
-        CentralProcessor processor = new SystemInfo().getHardware().getProcessor();
-        // Wait a second...
-        Util.sleep(100);
-        double[] loads = processor.getProcessorCpuLoadBetweenTicks();
-        double totalLoad = 0;
-        for (double load : loads) {
-            totalLoad += load;
-        }
-        DecimalFormat df = new DecimalFormat("#.##");
-        cpu = Double.parseDouble(df.format((totalLoad / loads.length) * 100));
-        Log.debug("CPU使用率: " + cpu);
-    }
 
-    public static void getMemoryInfo() {
-        SystemInfo systemInfo = new SystemInfo();
-        GlobalMemory memory = systemInfo.getHardware().getMemory();
-        TotalMem = memory.getTotal() / 1024 / 1024 / 1024;
-        UnusedMem = memory.getAvailable() / 1024 / 1024 / 1024;
-        Log.debug("服务器总内存: " + TotalMem);
-        Log.debug("服务器空闲内存: " + UnusedMem);
-    }
-
-    public static void getDiskUsed() {
-        File win = new File("/");
-        if (win.exists()) {
-            long total = win.getTotalSpace();
-            long freeSpace = win.getFreeSpace();
-            TotalDisk = total / 1024 / 1024 / 1024;
-            FreeSpaceDisk = freeSpace / 1024 / 1024 / 1024;
-            UsedDisk = (total - freeSpace) / 1024 / 1024 / 1024;
-        }
-        Log.debug("服务器总硬盘空间: " + TotalDisk);
-        Log.debug("服务器剩余硬盘空间: " + FreeSpaceDisk);
-        Log.debug("服务器使用硬盘空间: " + UsedDisk);
-    }
-
-    public static void getBytes() {
-        SystemInfo systemInfo = new SystemInfo();
-        HardwareAbstractionLayer hardware = systemInfo.getHardware();
-        DecimalFormat df = new DecimalFormat("#.##");
-        NetworkIF[] networkIFs = hardware.getNetworkIFs();
-        long getBytesRecv = 0;
-        long getBytesSent = 0;
-        for (NetworkIF net : networkIFs) {
-            getBytesRecv += net.getBytesRecv();
-            getBytesSent += net.getBytesSent();
-        }
-        getRecv = df.format((double) getBytesRecv / (1024 * 1024)) + "MB";
-        getSent = df.format((double) getBytesSent / (1024 * 1024)) + "MB";
-
-        Log.debug("服务器上行量: " + getSent);
-        Log.debug("服务器下行量: " + getRecv);
-
-    }
 
 
 
@@ -273,11 +232,8 @@ public class SecurityNew {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         subject.sendMessage(new At(user.getId()).plus(config.getSuffix() + "\n状态获取中，请稍等"));
-        getCpuUsage();
-        getMemoryInfo();
-        getDiskUsed();
-        getBytes();
-        info(stream, subject, user.getId());
+        SysInfo sysInfo = new SysInfo();
+        info(stream, subject, user.getId(), sysInfo);
         try {
             ExternalResource resource = ExternalResource.create(new ByteArrayInputStream(stream.toByteArray()));
             net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(resource);
@@ -308,7 +264,7 @@ public class SecurityNew {
         原图切圆边角
          */
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.fillRoundRect(0, 0, w, h, 50, 50);
+        g2.fillRoundRect(0, 0, w, h, 60, 60);
         g2.setComposite(AlphaComposite.SrcIn);
         /*结束*/
 
@@ -320,15 +276,8 @@ public class SecurityNew {
 
 
     public static String convertTime(long timestamp) {
-        long seconds = timestamp / 1000;
-        long days = seconds / (24 * 3600);
-        seconds = seconds % (24 * 3600);
-        long hours = seconds / 3600;
-        seconds %= 3600;
-        long minutes = seconds / 60;
-        seconds %= 60;
 
-        return String.format("%d天%d小时%d分%d秒", days, hours, minutes, seconds);
+        return DateUtil.formatBetween(timestamp, BetweenFormatter.Level.SECOND);
     }
 }
 

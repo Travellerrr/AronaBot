@@ -2,11 +2,12 @@ package cn.travellerr;
 
 import cn.travellerr.command.RegCommand;
 import cn.travellerr.config.Config;
+import cn.travellerr.config.SqlConfig;
 import cn.travellerr.config.VoiceBlackList;
 import cn.travellerr.event.Menu;
 import cn.travellerr.tools.GFont;
 import cn.travellerr.tools.Log;
-import cn.travellerr.tools.SecurityNew;
+import cn.travellerr.utils.HibernateUtil;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
@@ -22,8 +23,15 @@ public final class AronaBot extends JavaPlugin {
 
     public static Config config;
     public static VoiceBlackList blackList;
+    public static SqlConfig sqlConfig;
+
     public static String ffmpeg = null;
     public static long startTime = System.currentTimeMillis();
+
+
+    public static long sendGroupMsgNum = 0;
+    public static long sendFriendMsgNum = 0;
+
     private AronaBot() {
         super(new JvmPluginDescriptionBuilder("cn.travellerr.AronaBot", version)
                 .name("AronaBot")
@@ -39,13 +47,16 @@ public final class AronaBot extends JavaPlugin {
 
         reloadPluginConfig(cn.travellerr.config.Config.INSTANCE);
         reloadPluginConfig(VoiceBlackList.INSTANCE);
+        reloadPluginConfig(SqlConfig.INSTANCE);
         config = cn.travellerr.config.Config.INSTANCE;
         blackList = VoiceBlackList.INSTANCE;
+        sqlConfig = SqlConfig.INSTANCE;
 
         RegCommand regCommand = RegCommand.INSTANCE;
         regCommand.register();
 
         GFont.init();
+        HibernateUtil.init(this);
 
         ffmpeg = config.getFfmpegPath();
         if (!config.getUseSilk() && ffmpeg == null) {
@@ -62,12 +73,8 @@ public final class AronaBot extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, Menu::sendMenuToFriend);
         GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, Menu::sendMenuToGroup);
 
-        GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessagePostSendEvent.class, sendGroupMsgEvent -> {
-            SecurityNew.sendGroupMsgNum++;
-        });
-        GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessagePostSendEvent.class, sendFriendMsgEvent -> {
-            SecurityNew.sendFriendMsgNum++;
-        });
+        GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessagePostSendEvent.class, sendGroupMsgEvent -> sendGroupMsgNum++);
+        GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessagePostSendEvent.class, sendFriendMsgEvent -> sendFriendMsgNum++);
 
 
 
