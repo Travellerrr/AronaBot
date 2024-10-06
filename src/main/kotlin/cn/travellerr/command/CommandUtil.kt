@@ -89,9 +89,9 @@ object GenerateUnicodeName : SimpleCommand(AronaBot.INSTANCE, "generateName", "ç
     @Handler
     suspend fun generateName(sender: CommandContext, name: String, suffix: String) {
 
-        val generated: String = name + " \u2060\u202D\u2067" + suffix[suffix.length - 1] + suffix.substring(
+        val generated: String = "$name \u2060\u202D\u2067" + suffix.substring(
             0,
-            suffix.length - 1
+            suffix.length
         ) + "\u2067\u202D"
         val subject: Contact? = sender.sender.subject
         if (subject is Contact) {
