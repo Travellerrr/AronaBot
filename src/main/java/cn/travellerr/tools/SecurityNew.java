@@ -126,7 +126,7 @@ public class SecurityNew {
             int y = (420 - textHeight) / 2 + fontMetrics.getAscent();
             g2d.drawString(CpuInfo, x, y);
 
-
+            //绘制表盘
             dataset = new DefaultPieDataset<>();
             dataset.setValue("Used Memory", sysInfo.getTotalMem() - sysInfo.getFreeMem());
             dataset.setValue("Free Memory", sysInfo.getFreeMem());
