@@ -58,16 +58,16 @@ public class MessageEventListener extends SimpleListenerHost {
                     }
                     return;
                 case "卡片":
-                    api.use(event);
+                    Api.use(event);
                     return;
                 case "随机柴郡":
                     Log.info("表情包指令");
-                    api.chaiq(event);
+                    Api.chaiq(event);
                     return;
                 case "今日运势":
-                case "jrys":
+                case "Jrys":
                     Log.info("运势指令");
-                    jrys.info(event);
+                    Jrys.info(event);
                     return;
             }
             String info = "原神攻略 (\\S+)";
@@ -79,7 +79,7 @@ public class MessageEventListener extends SimpleListenerHost {
             String draw = "画\\s+(\\S+\\s*)*";
             if (Pattern.matches(draw, msg)) {
                 Log.info("攻略指令");
-                api.draw(event);
+                Api.draw(event);
                 return;
             }*/
             /*if (config.getUseVoice()) {

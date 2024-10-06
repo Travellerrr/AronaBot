@@ -1,8 +1,8 @@
 package cn.travellerr.event;
 
 import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.event.events.BotJoinGroupEvent;
 import net.mamoe.mirai.event.events.FriendAddEvent;
-import net.mamoe.mirai.event.events.MemberJoinEvent;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.PlainText;
 import net.mamoe.mirai.utils.ExternalResource;
@@ -12,8 +12,8 @@ import java.io.IOException;
 
 
 /**
+ * 实现加群自动发图片功能，私用模块，如要启用请更改下方信息
  * @author Travellerr
- * @implNote 实现加群自动发图片功能，私用模块，如要启用请更改下方信息
  * @since 2024/05/18
  */
 public class Menu {
@@ -39,7 +39,7 @@ public class Menu {
         }
     }
 
-    public static void sendMenuToGroup(MemberJoinEvent event) {
+    public static void sendMenuToGroup(BotJoinGroupEvent event) {
 
         // 启用QQ
         if (event.getBot().getId() == 896603204) {

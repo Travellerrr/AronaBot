@@ -23,6 +23,13 @@ dependencies {
     implementation 'com.alibaba:fastjson:2.0.9.graal'
 
     implementation 'org.xerial:sqlite-jdbc:3.44.1.0'
+
+    // 重构版使用hibernate操作数据库
+    implementation("cn.chahuyun:hibernate-plus:1.0.15")
+
+
+    implementation("org.projectlombok:lombok:1.18.24")
+    annotationProcessor("org.projectlombok:lombok:1.18.24")
 }
 mirai {
     jvmTarget JavaVersion.VERSION_11

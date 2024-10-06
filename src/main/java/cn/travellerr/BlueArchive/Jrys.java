@@ -1,5 +1,8 @@
 package cn.travellerr.BlueArchive;
 
+import cn.chahuyun.hibernateplus.HibernateFactory;
+import cn.travellerr.entity.FortuneInfo;
+import cn.travellerr.entity.UserInfo;
 import cn.travellerr.tools.GFont;
 import cn.travellerr.tools.Log;
 import net.mamoe.mirai.contact.AvatarSpec;
@@ -25,17 +28,17 @@ import static cn.travellerr.AronaBot.config;
 public class Jrys {
     private static int index = 1;
 
-    private static void sendImage(User sender, Image image, Contact subject, Long fromQQ) throws IOException {
+    private static void sendImage(User sender, Image image, Contact subject, FortuneInfo fortuneInfo) throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
             ImageIO.write((RenderedImage) image, "png", stream);
         } catch (IOException e) {
             MessageChainBuilder sendMsg = new MessageChainBuilder();
             net.mamoe.mirai.message.data.Image avatar = Contact.uploadImage(subject, new URL(sender.getAvatarUrl(AvatarSpec.LARGE)).openConnection().getInputStream());
-            sendMsg.append(new At(fromQQ));
+            sendMsg.append(new At(sender.getId()));
             sendMsg.append("\n");
             sendMsg.append(avatar);
-            sendMsg.append("\n").append(GetSentenceApi.fortuneSummary).append("\n").append(GetSentenceApi.luckyStar).append("\n").append(GetSentenceApi.signText).append("\n").append(GetSentenceApi.unSignText).append("\n\n抱歉").append(config.getSuffix()).append("，由于图片无法发送，这是阿洛娜手写出来的签！");
+            sendMsg.append("\n").append(fortuneInfo.getFortuneSummary()).append("\n").append(fortuneInfo.getLuckyStar()).append("\n").append(fortuneInfo.getSignText()).append("\n").append(fortuneInfo.getUnSignText()).append("\n\n抱歉").append(config.getSuffix()).append("，由于图片无法发送，这是阿洛娜手写出来的签！");
             Log.error("签到管理:签到图片发送错误!", e);
             subject.sendMessage(sendMsg.build());
             stream.close();
@@ -43,7 +46,7 @@ public class Jrys {
         }
         ExternalResource resource = ExternalResource.create(new ByteArrayInputStream(stream.toByteArray()));
         net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(resource);
-        subject.sendMessage(sendImage.plus(new At(fromQQ)));
+        subject.sendMessage(sendImage.plus(new At(sender.getId())));
         stream.close();
         resource.close();
     }
@@ -68,7 +71,12 @@ public class Jrys {
     public static void info(Contact subject, User sender) {
         subject.sendMessage(new At(sender.getId()).plus("\n" + config.getSuffix() + "请稍等！" + subject.getBot().getNick() + "这就为您抽签！"));
         long botId = subject.getBot().getId();
-        GetSentenceApi.generateFortuneID(sender.getId(), botId, true);
+        UserInfo userInfo = SqlUtil.fortuneManager(sender.getId(), botId);
+        if (userInfo == null) {
+            subject.sendMessage("出错啦~未获取到用户信息，请联系主人查看控制台");
+            return;
+        }
+        FortuneInfo fortuneInfo = HibernateFactory.selectOne(FortuneInfo.class, userInfo.getFortuneID());
 
         if (!config.isText()) {
 
@@ -142,7 +150,7 @@ public class Jrys {
 
 
                 //获取运势信息
-                String text = GetSentenceApi.fortuneSummary;
+                String text = fortuneInfo.getFortuneSummary();
                 //检测运势长度，自适应字体大小
                 int textX = 495;
                 if (text.length() > 6) {
@@ -160,7 +168,7 @@ public class Jrys {
                 g.drawString(text, x, 165);
 
                 //获取运势建议
-                String message = GetSentenceApi.unSignText;
+                String message = fortuneInfo.getUnSignText();
                 int adaption = 5;
                 int moveX = 38;
                 int msgX = 310;
@@ -192,7 +200,7 @@ public class Jrys {
                 g.drawString("AronaBot&Travellerr", 550, 795);
 
 
-                BufferedImage stamp = ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream(stamp(GetSentenceApi.luckyStar))));
+                BufferedImage stamp = ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream(stamp(fortuneInfo.getLuckyStar()))));
                 g.drawImage(stamp, 315, 618, null);
 
             /*font = font.deriveFont(30f);
@@ -201,7 +209,7 @@ public class Jrys {
             g.drawString("祝各位考生能考出属于自己的理想成绩！",40 ,750);*/
 
                 g.dispose();
-                sendImage(sender, combined, subject, sender.getId());
+                sendImage(sender, combined, subject, fortuneInfo);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -212,7 +220,7 @@ public class Jrys {
                 sendMsg.append(new At(sender.getId()));
                 sendMsg.append("\n");
                 sendMsg.append(avatar);
-                sendMsg.append("\n").append(GetSentenceApi.fortuneSummary).append("\n").append(GetSentenceApi.luckyStar).append("\n").append(GetSentenceApi.signText).append("\n").append(GetSentenceApi.unSignText);
+                sendMsg.append("\n").append(fortuneInfo.getFortuneSummary()).append("\n").append(fortuneInfo.getLuckyStar()).append("\n").append(fortuneInfo.getSignText()).append("\n").append(fortuneInfo.getUnSignText());
                 subject.sendMessage(sendMsg.build());
             } catch (Exception e) {
                 Log.error("出错了~", e.fillInStackTrace());

@@ -57,6 +57,7 @@ public final class AronaBot extends JavaPlugin {
 
         GFont.init();
         HibernateUtil.init(this);
+        Initialize.init();
 
         ffmpeg = config.getFfmpegPath();
         if (!config.getUseSilk() && ffmpeg == null) {
