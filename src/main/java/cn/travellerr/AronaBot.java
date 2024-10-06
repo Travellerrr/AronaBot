@@ -6,11 +6,14 @@ import cn.travellerr.config.VoiceBlackList;
 import cn.travellerr.event.Menu;
 import cn.travellerr.tools.GFont;
 import cn.travellerr.tools.Log;
+import cn.travellerr.tools.SecurityNew;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
+import net.mamoe.mirai.event.events.BotJoinGroupEvent;
 import net.mamoe.mirai.event.events.FriendAddEvent;
-import net.mamoe.mirai.event.events.MemberJoinEvent;
+import net.mamoe.mirai.event.events.FriendMessagePostSendEvent;
+import net.mamoe.mirai.event.events.GroupMessagePostSendEvent;
 
 public final class AronaBot extends JavaPlugin {
     public static final AronaBot INSTANCE = new AronaBot();
@@ -50,7 +53,6 @@ public final class AronaBot extends JavaPlugin {
             config.setUseVoice(false);
             reloadPluginConfig(cn.travellerr.config.Config.INSTANCE);
         }
-        //eventEventChannel.registerListenerHost(new MessageEventListener());
 
 
 
@@ -58,10 +60,13 @@ public final class AronaBot extends JavaPlugin {
 
         // 私用模块，请修改后使用
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, Menu::sendMenuToFriend);
-        GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, memberJoinEvent -> {
-            if (memberJoinEvent.getMember().getId() == memberJoinEvent.getBot().getId()) {
-                Menu.sendMenuToGroup(memberJoinEvent);
-            }
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, Menu::sendMenuToGroup);
+
+        GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessagePostSendEvent.class, sendGroupMsgEvent -> {
+            SecurityNew.sendGroupMsgNum++;
+        });
+        GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessagePostSendEvent.class, sendFriendMsgEvent -> {
+            SecurityNew.sendFriendMsgNum++;
         });
 
 

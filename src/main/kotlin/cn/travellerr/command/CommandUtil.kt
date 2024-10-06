@@ -1,13 +1,13 @@
 package cn.travellerr.command
 
 import cn.travellerr.AronaBot
-import cn.travellerr.BlueArchive.jrrp
-import cn.travellerr.BlueArchive.jrys
+import cn.travellerr.BlueArchive.Jrrp
+import cn.travellerr.BlueArchive.Jrys
 import cn.travellerr.config.Config.url
 import cn.travellerr.config.Config.useSilk
+import cn.travellerr.tools.Api
 import cn.travellerr.tools.Log
 import cn.travellerr.tools.SecurityNew
-import cn.travellerr.tools.api
 import cn.travellerr.websocket.VoiceGet
 import net.mamoe.mirai.console.MiraiConsole
 import net.mamoe.mirai.console.command.CommandContext
@@ -25,7 +25,7 @@ object GetJrys : SimpleCommand(AronaBot.INSTANCE, "jrys", "今日运势", descri
         Log.info("运势指令")
         val subject: Contact? = sender.subject
         val user: User? = sender.user
-        jrys.info(subject, user)
+        Jrys.info(subject, user)
     }
 }
 
@@ -57,7 +57,7 @@ object RandomChaiq : SimpleCommand(AronaBot.INSTANCE, "random-chaiq", "随机柴
         val subject: Contact? = sender.subject
         val user: User? = sender.user
         Log.info("表情包指令")
-        api.chaiq(subject, user)
+        Api.chaiq(subject, user)
     }
 }
 
@@ -116,7 +116,7 @@ object GetJrrp : SimpleCommand(AronaBot.INSTANCE, "jrrp", "今日人品") {
         val subject: Contact? = context.sender.subject
         val user: User? = context.sender.user
 
-        jrrp.info(subject, user)
+        Jrrp.info(subject, user)
     }
 }
 

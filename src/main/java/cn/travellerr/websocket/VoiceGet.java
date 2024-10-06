@@ -16,8 +16,8 @@ import java.util.StringJoiner;
 
 import static cn.travellerr.AronaBot.blackList;
 import static cn.travellerr.AronaBot.ffmpeg;
+import static cn.travellerr.websocket.DownloadVoice.tempId;
 import static cn.travellerr.websocket.VoiceWebSocketClient.errorMsg;
-import static cn.travellerr.websocket.downloadVoice.tempId;
 
 public class VoiceGet {
     static boolean verbose = true;

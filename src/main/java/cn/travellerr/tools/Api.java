@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 
 import static cn.travellerr.AronaBot.config;
 
-public class api {
+public class Api {
 
     /*public static void chaiq(MessageEvent event) {
         try {

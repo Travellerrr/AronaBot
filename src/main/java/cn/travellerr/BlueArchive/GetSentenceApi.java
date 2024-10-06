@@ -26,9 +26,9 @@ public class GetSentenceApi {
 
     static int AllFortuneID = 402;
 
-    public static void generateFortuneID(long qqNumber, boolean isForJrys) {
+    public static void generateFortuneID(long qqNumber, long botId, boolean isForJrys) {
         String directory = "./data/cn.travellerr.AronaBot/";
-        String dbName = "jrys.db"; // 数据库文件名
+        String dbName = "Jrys.db"; // 数据库文件名
         String dbPath = Paths.get(directory, dbName).toString();
         String url = "jdbc:sqlite:" + dbPath;
 
@@ -44,11 +44,11 @@ public class GetSentenceApi {
         try (Connection conn = DriverManager.getConnection(url)) {
             createTable(conn);
             if (isQQNumberNew(conn, qqNumber)) {
-                int fortuneID = generateFortuneID();
+                int fortuneID = generateFortuneID(qqNumber, botId);
                 insertData(conn, qqNumber, fortuneID);
             }
             if (isDateDifferent(conn, qqNumber)) {
-                int fortuneID = generateFortuneID();
+                int fortuneID = generateFortuneID(qqNumber, botId);
                 updateData(conn, qqNumber, fortuneID);
             }
             if (isForJrys) getData(conn, qqNumber);
@@ -59,7 +59,7 @@ public class GetSentenceApi {
 
     public static boolean isDateDifferent(long qqNumber) {
         String directory = "./data/cn.travellerr.AronaBot/";
-        String dbName = "jrys.db"; // 数据库文件名
+        String dbName = "Jrys.db"; // 数据库文件名
         String dbPath = Paths.get(directory, dbName).toString();
         String url = "jdbc:sqlite:" + dbPath;
 
@@ -98,7 +98,7 @@ public class GetSentenceApi {
 
     public static boolean isQQNumberNew(long qqNumber) {
         String directory = "./data/cn.travellerr.AronaBot/";
-        String dbName = "jrys.db"; // 数据库文件名
+        String dbName = "Jrys.db"; // 数据库文件名
         String dbPath = Paths.get(directory, dbName).toString();
         String url = "jdbc:sqlite:" + dbPath;
 
@@ -156,8 +156,8 @@ public class GetSentenceApi {
         }
     }
 
-    private static int generateFortuneID() {
-        Random random = new Random();
+    private static int generateFortuneID(long userId, long botId) {
+        Random random = new Random(System.currentTimeMillis() + userId + botId);
         return random.nextInt(AllFortuneID) + 1;
     }
 
@@ -248,7 +248,7 @@ public class GetSentenceApi {
 
     public static int getFortuneID(long qqNumber) {
         String directory = "./data/cn.travellerr.AronaBot/";
-        String dbName = "jrys.db"; // 数据库文件名
+        String dbName = "Jrys.db"; // 数据库文件名
         String dbPath = Paths.get(directory, dbName).toString();
         String url = "jdbc:sqlite:" + dbPath;
 

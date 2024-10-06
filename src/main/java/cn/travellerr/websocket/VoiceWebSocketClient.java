@@ -81,7 +81,7 @@ public class VoiceWebSocketClient extends WebSocketClient {
             // 获取name字段对应的值
             String filePath = secondElementObject.get("name").getAsString();
 
-            downloadVoice.downloadFromUrl(filePath, url);
+            DownloadVoice.downloadFromUrl(filePath, url);
         }
     }
 

@@ -22,7 +22,7 @@ import java.util.Random;
 
 import static cn.travellerr.AronaBot.config;
 
-public class jrys {
+public class Jrys {
     private static int index = 1;
 
     private static void sendImage(User sender, Image image, Contact subject, Long fromQQ) throws IOException {
@@ -67,7 +67,8 @@ public class jrys {
 
     public static void info(Contact subject, User sender) {
         subject.sendMessage(new At(sender.getId()).plus("\n" + config.getSuffix() + "请稍等！" + subject.getBot().getNick() + "这就为您抽签！"));
-        GetSentenceApi.generateFortuneID(sender.getId(), true);
+        long botId = subject.getBot().getId();
+        GetSentenceApi.generateFortuneID(sender.getId(), botId, true);
 
         if (!config.isText()) {
 
@@ -90,7 +91,7 @@ public class jrys {
                 }
 
                 // 读取背景图片和覆盖图片
-                ClassLoader classLoader = jrys.class.getClassLoader();
+                ClassLoader classLoader = Jrys.class.getClassLoader();
                 BufferedImage background = ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream("jrys/" + school + "/" + club + "/bg.png")));
                 BufferedImage cover = ImageIO.read(Objects.requireNonNull(classLoader.getResourceAsStream("jrys/" + school + "/" + club + "/" + (index % picNum == 0 ? picNum : index % picNum) + ".png")));
                 index++;

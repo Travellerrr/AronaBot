@@ -5,9 +5,10 @@ import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 
-public class jrrp {
+public class Jrrp {
     public static void info(Contact subject, User user) {
         long qqNumber = user.getId();
+        long botId = subject.getBot().getId();
         boolean isUserNew = GetSentenceApi.isQQNumberNew(qqNumber);
         boolean isDifferentDate = !isUserNew && GetSentenceApi.isDateDifferent(qqNumber);
 
@@ -17,7 +18,7 @@ public class jrrp {
         if (!isDifferentDate && !isUserNew) {
             message.append("今日已查询,");
         } else {
-            GetSentenceApi.generateFortuneID(qqNumber, false);
+            GetSentenceApi.generateFortuneID(qqNumber, botId, false);
         }
 
         int jrrp = GetSentenceApi.getFortuneID(qqNumber) % 101;

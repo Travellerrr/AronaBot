@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class downloadVoice {
+public class DownloadVoice {
     public static long tempId;
 
     public static void downloadFromUrl(String urlS, String modelUrl) {
