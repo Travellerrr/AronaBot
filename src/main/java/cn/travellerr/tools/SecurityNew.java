@@ -171,7 +171,6 @@ public class SecurityNew {
              * 第三框图
              */
 
-            //TODO 群聊与好友累计发送消息统计，网络流量，群聊个数，好友个数……
 
 
             Font = Font.deriveFont(java.awt.Font.PLAIN);
