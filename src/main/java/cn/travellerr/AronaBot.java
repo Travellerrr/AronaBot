@@ -19,7 +19,7 @@ import net.mamoe.mirai.event.events.GroupMessagePostSendEvent;
 public final class AronaBot extends JavaPlugin {
     public static final AronaBot INSTANCE = new AronaBot();
     /*插件版本*/
-    public static final String version = "1.1.2";
+    public static final String version = "2.0.0";
 
     public static Config config;
     public static VoiceBlackList blackList;
