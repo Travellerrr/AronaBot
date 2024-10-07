@@ -25,7 +25,7 @@ dependencies {
     implementation 'org.xerial:sqlite-jdbc:3.44.1.0'
 
     // 重构版使用hibernate操作数据库
-    implementation("cn.chahuyun:hibernate-plus:1.0.15")
+    implementation("cn.chahuyun:hibernate-plus:1.0.16")
 
 
     implementation("org.projectlombok:lombok:1.18.24")

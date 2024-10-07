@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.mamoe.mirai.console.MiraiConsole;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,13 +19,17 @@ import java.nio.charset.StandardCharsets;
 
 public class Initialize {
     public static void init() {
-        if (HibernateFactory.selectList(FortuneInfo.class).isEmpty()) {
-            Log.warning("运势数据库中没有数据，正在初始化...");
-            long initSqlStart = System.currentTimeMillis();
-            jrysToSql();
-            Log.warning("初始化完成！用时 " +
-                    DateUtil.formatBetween(System.currentTimeMillis() - initSqlStart, BetweenFormatter.Level.MILLISECOND));
-        }
+        Thread thread = new Thread(() -> {
+            if (HibernateFactory.selectList(FortuneInfo.class).isEmpty()) {
+                Log.warning("运势数据库中没有数据，正在初始化...");
+                long initSqlStart = System.currentTimeMillis();
+                jrysToSql();
+                Log.warning("初始化完成！用时 " +
+                        DateUtil.formatBetween(System.currentTimeMillis() - initSqlStart, BetweenFormatter.Level.MILLISECOND));
+            }
+        });
+
+        thread.start();
     }
 
     private static void jrysToSql() {
@@ -51,11 +56,6 @@ public class Initialize {
         } catch (IOException e) {
             throw new RuntimeException("无法找到或读取jrys.json文件", e);
         }
-    }
-
-    private static String getStringFromJson(JsonObject jsonObject, String key) {
-        JsonElement jsonElement = jsonObject.get(key);
-        return jsonElement != null ? jsonElement.getAsString() : null;
     }
 
     private static void saveToDatabase(int id, String fortuneSummary, String luckyStar, String signText, String unSignText) {

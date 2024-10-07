@@ -66,10 +66,6 @@ public final class AronaBot extends JavaPlugin {
             reloadPluginConfig(cn.travellerr.config.Config.INSTANCE);
         }
 
-
-
-
-
         // 私用模块，请修改后使用
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, Menu::sendMenuToFriend);
         GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, Menu::sendMenuToGroup);
@@ -77,12 +73,7 @@ public final class AronaBot extends JavaPlugin {
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessagePostSendEvent.class, sendGroupMsgEvent -> sendGroupMsgNum++);
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessagePostSendEvent.class, sendFriendMsgEvent -> sendFriendMsgNum++);
 
-
-
-
         Log.info("插件已加载!");
-
-
     }
 
     @Override
