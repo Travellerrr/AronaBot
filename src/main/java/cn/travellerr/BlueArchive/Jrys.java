@@ -29,9 +29,12 @@ public class Jrys {
     private static int index = 1;
 
     private static void sendImage(User sender, Image image, Contact subject, FortuneInfo fortuneInfo) throws IOException {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        try {
+
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
+             ExternalResource resource = ExternalResource.create(new ByteArrayInputStream(stream.toByteArray()))) {
             ImageIO.write((RenderedImage) image, "png", stream);
+            net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(resource);
+            subject.sendMessage(sendImage.plus(new At(sender.getId())));
         } catch (IOException e) {
             MessageChainBuilder sendMsg = new MessageChainBuilder();
             net.mamoe.mirai.message.data.Image avatar = Contact.uploadImage(subject, new URL(sender.getAvatarUrl(AvatarSpec.LARGE)).openConnection().getInputStream());
@@ -41,14 +44,7 @@ public class Jrys {
             sendMsg.append("\n").append(fortuneInfo.getFortuneSummary()).append("\n").append(fortuneInfo.getLuckyStar()).append("\n").append(fortuneInfo.getSignText()).append("\n").append(fortuneInfo.getUnSignText()).append("\n\n抱歉").append(config.getSuffix()).append("，由于图片无法发送，这是阿洛娜手写出来的签！");
             Log.error("签到管理:签到图片发送错误!", e);
             subject.sendMessage(sendMsg.build());
-            stream.close();
-            return;
         }
-        ExternalResource resource = ExternalResource.create(new ByteArrayInputStream(stream.toByteArray()));
-        net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(resource);
-        subject.sendMessage(sendImage.plus(new At(sender.getId())));
-        stream.close();
-        resource.close();
     }
 
     private static String stamp(String luckyStar) {

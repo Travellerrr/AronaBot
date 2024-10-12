@@ -229,16 +229,16 @@ public class SecurityNew {
 
     public static void Security(Contact subject, User user) {
 
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
         subject.sendMessage(new At(user.getId()).plus(config.getSuffix() + "\n状态获取中，请稍等"));
-        SysInfo sysInfo = new SysInfo();
-        info(stream, subject, user.getId(), sysInfo);
-        try {
-            ExternalResource resource = ExternalResource.create(new ByteArrayInputStream(stream.toByteArray()));
+        try (
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                ExternalResource resource = ExternalResource.create(new ByteArrayInputStream(stream.toByteArray()))
+        ) {
+            SysInfo sysInfo = new SysInfo();
+            info(stream, subject, user.getId(), sysInfo);
             net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(resource);
             subject.sendMessage(sendImage.plus(new At(user.getId())));
-            resource.close();
-            stream.close();
 
         } catch (Exception e) {
             e.fillInStackTrace();
