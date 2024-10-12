@@ -30,11 +30,14 @@ public class Jrys {
 
     private static void sendImage(User sender, Image image, Contact subject, FortuneInfo fortuneInfo) throws IOException {
 
-        try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
-             ExternalResource resource = ExternalResource.create(new ByteArrayInputStream(stream.toByteArray()))) {
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
             ImageIO.write((RenderedImage) image, "png", stream);
-            net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(resource);
-            subject.sendMessage(sendImage.plus(new At(sender.getId())));
+
+            try (ExternalResource resource = ExternalResource.create(new ByteArrayInputStream(stream.toByteArray()))) {
+                net.mamoe.mirai.message.data.Image sendImage = subject.uploadImage(resource);
+                subject.sendMessage(sendImage.plus(new At(sender.getId())));
+            }
+
         } catch (IOException e) {
             MessageChainBuilder sendMsg = new MessageChainBuilder();
             net.mamoe.mirai.message.data.Image avatar = Contact.uploadImage(subject, new URL(sender.getAvatarUrl(AvatarSpec.LARGE)).openConnection().getInputStream());
