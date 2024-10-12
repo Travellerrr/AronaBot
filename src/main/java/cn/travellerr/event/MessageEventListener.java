@@ -1,20 +1,28 @@
 package cn.travellerr.event;
 
-import cn.travellerr.config.Config;
+import cn.travellerr.AronaBot;
 import cn.travellerr.tools.Log;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import kotlin.coroutines.CoroutineContext;
 import net.mamoe.mirai.contact.BotIsBeingMutedException;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.MessageTooLargeException;
-import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.EventCancelledException;
 import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.message.data.QuoteReply;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.InputStreamReader;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
-@Deprecated(since = "加入MCL指令系统")
+
 public class MessageEventListener extends SimpleListenerHost {
 
     @Override
@@ -34,77 +42,38 @@ public class MessageEventListener extends SimpleListenerHost {
     }
     @EventHandler()
     public void onMessage(@NotNull MessageEvent event) {
-        Config config = cn.travellerr.config.Config.INSTANCE;
-        User sender = event.getSender();
         Contact subject = event.getSubject();
-        String msg = event.getMessage().serializeToMiraiCode();
-        String url = config.getUrl();
-        boolean useSilk = config.getUseSilk();
-        /*if (msg.startsWith(prefix)) {
-            msg = msg.substring(1);
-            switch (msg) {
-                case "测试":
-                    return;
-                case "原神角色列表":
-                    Contact.sendImage(subject, new File("./data/cn.travellerr.GenshinHelper/GenshinHelp/角色列表/info.png"));
-                    return;
-                case "监控":
-                case "状态":
-                    if (owner || config.getUser().contains(sender.getId())) {
-                        Log.info("监控指令");
-                        SecurityNew.Security(event);
-                    } else {
-                        Log.warning("权限不足");
-                    }
-                    return;
-                case "卡片":
-                    Api.use(event);
-                    return;
-                case "随机柴郡":
-                    Log.info("表情包指令");
-                    Api.chaiq(event);
-                    return;
-                case "今日运势":
-                case "Jrys":
-                    Log.info("运势指令");
-                    Jrys.info(event);
-                    return;
-            }
-            String info = "原神攻略 (\\S+)";
-            if (Pattern.matches(info, msg)) {
-                Log.info("攻略指令");
-                CharacterHelp.help(event);
-                return;
-            }
-            String draw = "画\\s+(\\S+\\s*)*";
-            if (Pattern.matches(draw, msg)) {
-                Log.info("攻略指令");
-                Api.draw(event);
-                return;
-            }*/
-            /*if (config.getUseVoice()) {
+        String message = event.getMessage().serializeToMiraiCode();
+        QuoteReply quoteReply = new QuoteReply(event.getMessage());
 
-                String makeWithLang = "^(\\S+)说 .* (.*日.*|.*中.*|.*英.*)$";
-                if (Pattern.matches(makeWithLang, msg)) {
-                    Log.info("其他语音生成");
-                    VoiceGet.make(event, true, url, useSilk);
-                    return;
+
+        try (InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(AronaBot.INSTANCE.getResourceAsStream("data.json")))) {
+            // 读取JSON文件
+            JsonObject jsonObject = new Gson().fromJson(reader, JsonObject.class);
+
+            JsonObject normalObject = jsonObject.getAsJsonObject("Normal");
+            // 获取对应键的值
+            if (normalObject != null) {
+                if (!handleMessages(normalObject, message, subject, quoteReply) && AronaBot.config.isR18()) {
+                    JsonObject r18Object = jsonObject.getAsJsonObject("R18");
+                    handleMessages(r18Object, message, subject, quoteReply);
                 }
-
-                String make = "^(\\S+)说 .*$";
-                if (Pattern.matches(make, msg)) {
-                    Log.info("中文语音生成");
-                    VoiceGet.make(event, false, url, useSilk);
-                    return;
-                }*/
-
-
-                /*String BALogo = "balogo (\\S+) (\\S+)";
-                if (Pattern.matches(BALogo, msg)) {
-                    Log.info("BA标题生成");
-                    VoiceGet.make(event, true, url, useSilk);
-                    return;
-                }*/
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    private boolean handleMessages(JsonObject jsonObject, String message, Contact subject, QuoteReply quoteReply) {
+        JsonArray messageObject = jsonObject.getAsJsonArray(message);
+        if (messageObject != null) {
+            List<String> messages = new Gson().fromJson(messageObject, new TypeToken<List<String>>() {
+            }.getType());
+            String randomMessage = messages.get(new Random().nextInt(messages.size()));
+            subject.sendMessage(quoteReply.plus(randomMessage));
+            return true;
+        }
+        return false;
+    }
+}
 

@@ -26,6 +26,12 @@ object Config : AutoSavePluginConfig("Config") {
     @ValueDescription("ffmpeg地址\n")
     var ffmpegPath: String by value()
 
+    @ValueDescription("是否开启二次元语录回复")
+    var isReply: Boolean by value(false)
+
+    @ValueDescription("是否开启R18语录")
+    var isR18: Boolean by value(false)
+
     @ValueDescription("Debug模式")
     var debug: Boolean by value(false)
 

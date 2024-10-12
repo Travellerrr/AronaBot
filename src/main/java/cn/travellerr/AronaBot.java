@@ -5,11 +5,14 @@ import cn.travellerr.config.Config;
 import cn.travellerr.config.SqlConfig;
 import cn.travellerr.config.VoiceBlackList;
 import cn.travellerr.event.Menu;
+import cn.travellerr.event.MessageEventListener;
 import cn.travellerr.tools.GFont;
 import cn.travellerr.tools.Log;
 import cn.travellerr.utils.HibernateUtil;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
+import net.mamoe.mirai.event.Event;
+import net.mamoe.mirai.event.EventChannel;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.BotJoinGroupEvent;
 import net.mamoe.mirai.event.events.FriendAddEvent;
@@ -19,7 +22,7 @@ import net.mamoe.mirai.event.events.GroupMessagePostSendEvent;
 public final class AronaBot extends JavaPlugin {
     public static final AronaBot INSTANCE = new AronaBot();
     /*插件版本*/
-    public static final String version = "2.0.0";
+    public static final String version = "2.0.1";
 
     public static Config config;
     public static VoiceBlackList blackList;
@@ -69,6 +72,11 @@ public final class AronaBot extends JavaPlugin {
         // 私用模块，请修改后使用
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendAddEvent.class, Menu::sendMenuToFriend);
         GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, Menu::sendMenuToGroup);
+
+        if (config.isReply()) {
+            EventChannel<Event> eventEventChannel = GlobalEventChannel.INSTANCE.parentScope(AronaBot.INSTANCE);
+            eventEventChannel.registerListenerHost(new MessageEventListener());
+        }
 
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessagePostSendEvent.class, sendGroupMsgEvent -> sendGroupMsgNum++);
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessagePostSendEvent.class, sendFriendMsgEvent -> sendFriendMsgNum++);
