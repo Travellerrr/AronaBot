@@ -17,9 +17,8 @@ import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.QuoteReply;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.InputStreamReader;
+import java.io.FileReader;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 
@@ -42,12 +41,19 @@ public class MessageEventListener extends SimpleListenerHost {
     }
     @EventHandler()
     public void onMessage(@NotNull MessageEvent event) {
-        Contact subject = event.getSubject();
+
         String message = event.getMessage().serializeToMiraiCode();
+        if (AronaBot.config.isAt()) {
+            if (!message.contains("[mirai:at:" + event.getBot().getId() + "]")) {
+                return;
+            }
+            message = message.split("]")[1].trim();
+        }
+        Contact subject = event.getSubject();
         QuoteReply quoteReply = new QuoteReply(event.getMessage());
 
 
-        try (InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(AronaBot.INSTANCE.getResourceAsStream("data.json")))) {
+        try (FileReader reader = new FileReader(AronaBot.INSTANCE.getDataFolder() + "/replyData.json")) {
             // 读取JSON文件
             JsonObject jsonObject = new Gson().fromJson(reader, JsonObject.class);
 

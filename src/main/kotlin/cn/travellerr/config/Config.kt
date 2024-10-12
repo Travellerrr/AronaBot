@@ -29,6 +29,9 @@ object Config : AutoSavePluginConfig("Config") {
     @ValueDescription("是否开启二次元语录回复")
     var isReply: Boolean by value(false)
 
+    @ValueDescription("语录需要@机器人触发")
+    var isAt: Boolean by value(true)
+
     @ValueDescription("是否开启R18语录")
     var isR18: Boolean by value(false)
 
